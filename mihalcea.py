@@ -3,6 +3,7 @@ import itertools as its
 import json
 import networkx as nx
 import os
+import random
 import re
 import sys
 import tqdm
@@ -30,7 +31,7 @@ def load_json(file_path, print_content=False):
     try:
         file = open(file_path, 'r')
     except OSError:
-        print('Could not open file:' + file + ', exiting program.')
+        print('Could not open file: {}, exiting program.'.format(file_path.split('/')[-1]))
         sys.exit()
     with file:
         raw_data = json.load(file)
@@ -99,9 +100,9 @@ def build_graph_from_directory(dir_path, save=False, filename='comments_authors_
 
     Examples
     --------
-    Build a graph G from the sequence files in the "data/sequences" directory and save it to disk as "my_graph.json":
+    Build a graph g from the sequence files in the "data/sequences" directory and save it to disk as "my_graph.json":
 
-        G = build_graph_from_directory('data/sequences', save=True, 'my_graph.json')
+        g = build_graph_from_directory('data/sequences', save=True, 'my_graph.json')
     """
 
     # Get file list
@@ -110,7 +111,7 @@ def build_graph_from_directory(dir_path, save=False, filename='comments_authors_
     file_list = [json_file for json_file in os.listdir(dir_path) if json_file.endswith('.json')]
 
     # Prepare variables
-    G = nx.Graph()
+    g = nx.Graph()
     progress_bar = tqdm.tqdm(total=len(file_list))
 
     # Parse all JSON files
@@ -121,16 +122,16 @@ def build_graph_from_directory(dir_path, save=False, filename='comments_authors_
 
         authors = parse_authors_from_comments(raw_data)
         if authors:
-            # G.add_nodes_from(authors)
-            G.add_edges_from(list(its.combinations(authors, 2)))
+            # g.add_nodes_from(authors)
+            g.add_edges_from(list(its.combinations(authors, 2)))
         progress_bar.update(1)
 
     # Save graph
     if save:
         with open(dir_path.split('/')[0] + '/' + filename + '.json', 'w') as out_file:
-            json.dump(nx.readwrite.json_graph.node_link_data(G), out_file)
+            json.dump(nx.readwrite.json_graph.node_link_data(g), out_file)
 
-    return G
+    return g
 
 
 def load_json_graph(file_path):
@@ -144,12 +145,101 @@ def load_json_graph(file_path):
 
     Examples
     --------
-    Load graph into variable G from a JSON file named "comments_authors_graph.json":
+    Load graph into variable g from a JSON file named "comments_authors_graph.json":
 
-        G = load_json_graph('data/comments_authors_graph.json')
+        g = load_json_graph('data/comments_authors_graph.json')
     """
     with open(file_path) as file:
         return nx.readwrite.json_graph.node_link_graph(json.load(file))
+
+
+def find_a_maximal_clique(g, pivoting=True, print_clique=True):
+    def bron_kerbosch(r, p, x):  # TODO https://en.wikipedia.org/wiki/Bron%E2%80%93Kerbosch_algorithm
+        if not p and not x:
+            if len(r) > 2:
+                return r
+        else:
+            for v in {*p}:
+                return bron_kerbosch(r | {v}, p & {*g.neighbors(v)}, x & {*g.neighbors(v)})
+
+    def bron_kerbosch_pivoting(r, p, x):
+        if not p and not x:
+            if len(r) > 2:
+                return r
+        else:
+            u = max({(v, len({n for n in g.neighbors(v) if n in p})) for v in p | x}, key=lambda v: v[1])[0]
+            for v in p - {*g.neighbors(u)}:
+                return bron_kerbosch_pivoting(r | {v}, p & {*g.neighbors(v)}, x & {*g.neighbors(v)})
+
+    if g.nodes:
+        # Initialization
+        r = {*()}  # TODO https://stackoverflow.com/questions/6130374/empty-set-literal is faster
+        p = {*g.nodes}
+        x = {*()}
+
+        # Bron-Kerbosch algorithm
+        if pivoting:
+            clique = bron_kerbosch_pivoting(r, p, x)
+        else:
+            clique = bron_kerbosch(r, p, x)
+
+        # Printing
+        if print_clique:
+            print(clique)
+
+        return clique
+    else:
+        print('The provided graph is empty.')
+        return
+
+
+def find_all_maximal_cliques(g, pivoting=True, print_cliques=False):
+    def bron_kerbosch(r, p, x):  # TODO https://en.wikipedia.org/wiki/Bron%E2%80%93Kerbosch_algorithm
+        if not p and not x:
+            if len(r) > 2:
+                yield r
+        else:
+            for v in {*p}:
+                yield from bron_kerbosch(r | {v}, p & {*g.neighbors(v)}, x & {*g.neighbors(v)})
+                p = p - {v}
+                x.add(v)
+
+    def bron_kerbosch_pivoting(r, p, x):
+        if not p and not x:
+            if len(r) > 2:
+                yield r
+        else:
+            u = max({(v, len({n for n in g.neighbors(v) if n in p})) for v in p | x}, key=lambda v: v[1])[0]
+            for v in p - {*g.neighbors(u)}:
+                yield from bron_kerbosch_pivoting(r | {v}, p & {*g.neighbors(v)}, x & {*g.neighbors(v)})
+                p = p - {v}
+                x.add(v)
+
+    if g.nodes:
+        # Initialization
+        r = {*()}  # TODO https://stackoverflow.com/questions/6130374/empty-set-literal is faster
+        p = {*g.nodes}
+        x = {*()}
+
+        # Bron-Kerbosch algorithm
+        if pivoting:
+            cliques = bron_kerbosch_pivoting(r, p, x)
+        else:
+            cliques = bron_kerbosch(r, p, x)
+
+        # Printing
+        if print_cliques:
+            print(*cliques, sep='\n')
+
+        return cliques
+
+    else:
+        print('The provided graph is empty.')
+        return
+
+
+def sample_random_subgraph(g, n):  # TODO
+    return g.subgraph(random.sample(g.nodes, n))
 
 
 ######################################################################
@@ -163,23 +253,17 @@ def main(args):
 
     Parameters
     ----------
-    file_path : string
-        Absolute or relative path of the JSON file containing hte graph to be loaded.
-
-    Examples
-    --------
-    Load graph into variable G from a JSON file named "comments_authors_graph.json":
-
-        G = load_json_graph('data/comments_authors_graph.json')
+    args : argparse.Namespace
+        Command line arguments, usable as args.argument_name.
     """
 
     # Load sample sequence file
-    print('Printing sample OEIS JSON file...')
+    print('\n' + 'Printing sample OEIS JSON file...')
 
     file = load_json('data/sequences/A000001.json', print_content=True)
 
     # Print 'results' section of the sample sequence
-    print('Printing sample file "results"\' section...')
+    print('\n' + 'Printing sample file "results" section...' + '\n')
 
     results = file.get('results')
     if results:
@@ -188,27 +272,46 @@ def main(args):
         print('No "results" section found.')
 
     # Print 'comment' subsection of the sample sequence
-    print('Printing sample file "comment"\'s subsection...')
+    print('\n' + 'Printing sample file "comment" subsection...' + '\n')
 
     comment_list = results[0].get('comment')
     if comment_list:
         print(json.dumps(comment_list, indent=True))
     else:
-        print('No "comments" subsection found.')
+        print('No "comments" subsection found.' + '\n')
 
     if args.build_graph == 'True':  # Build graph and save to file
-        print('Building graph G, where:')
+        print('\n' + 'Building graph g, where:')
+        print('- nodes represent all unique authors that can be found in each comment of every sequence;')
+        print('- edges link two authors who have commented the same sequence...')
+
+        g = build_graph_from_directory('data/sequences', save=True)
+    else:  # Load graph from disk
+        print('\n' + 'Loading graph g from "data/comments_authors_graph.json", where:')
         print('- nodes represent all unique authors that can be found in each comment of every sequence;')
         print('- edges link two authors who have commented the same sequence.')
 
-        G = build_graph_from_directory('data/sequences', save=True)
+        g = load_json_graph('data/comments_authors_graph.json')
 
-    else:  # Load graph from disk
-        print('Loading graph G from "data/comments_authors_graph.json".')
+    print('\n' + 'Graph g has {} nodes and {} edges.'.format(len(g.nodes), len(g.edges)))
 
-        G = load_json_graph('data/comments_authors_graph.json')
+    # TODO
+    '''
+    def mio_no_pivot():
+        return find_all_maximal_cliques(big_graph, False)
 
-    return
+    def mio_si_pivot():
+        return find_all_maximal_cliques(big_graph)
+
+    def suo():
+        return nx.find_cliques(big_graph)
+
+
+    number=1000000
+    print(timeit.timeit(mio_no_pivot, number=number))
+    print(timeit.timeit(mio_si_pivot, number=number))
+    print(timeit.timeit(suo, number=number))
+    '''
 
 
 ######################################################################
@@ -217,7 +320,7 @@ def main(args):
 if __name__ == '__main__':
 
     parser = argparse.ArgumentParser(description='Main script for the OEIS Comments Authors Max Clique project.')
-    parser.add_argument('build_graph', choices=('True', 'False'), help='Build graph from raw data, otherwise load it from the "data/comments_authors_graph.json" file.')
+    parser.add_argument('-bg', '--build_graph', choices=('True', 'False'), default='True', help='Build graph from raw data, otherwise load it from the "data/comments_authors_graph.json" file.')
 
     args = parser.parse_args()
 
