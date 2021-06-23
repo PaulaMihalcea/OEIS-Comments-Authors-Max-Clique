@@ -280,6 +280,7 @@ def main(args):
     else:
         print('No "comments" subsection found.' + '\n')
 
+    # Graph creation (either from raw data or existing JSON graph)
     if args.build_graph == 'True':  # Build graph and save to file
         print('\n' + 'Building graph g, where:')
         print('- nodes represent all unique authors that can be found in each comment of every sequence;')
@@ -295,7 +296,16 @@ def main(args):
 
     print('\n' + 'Graph g has {} nodes and {} edges.'.format(len(g.nodes), len(g.edges)))
 
-    # TODO
+
+
+    # Find and print a maximal clique
+    find_a_maximal_clique(g, print_clique=True)
+
+    # Find and print all maximal cliques in a random subgraph of 100 nodes
+    subgraph = sample_random_subgraph(g, 100)
+    find_all_maximal_cliques(subgraph, print_cliques=True)
+
+    # TODO Timing
     '''
     def mio_no_pivot():
         return find_all_maximal_cliques(big_graph, False)
