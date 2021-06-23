@@ -153,8 +153,12 @@ def load_json_graph(file_path):
         return nx.readwrite.json_graph.node_link_graph(json.load(file))
 
 
-def find_a_maximal_clique(g, pivoting=True, print_clique=True):
-    def bron_kerbosch(r, p, x):  # TODO https://en.wikipedia.org/wiki/Bron%E2%80%93Kerbosch_algorithm
+def find_a_maximal_clique(g, tomita=True, print_result=True):
+    if not isinstance(g, nx.classes.graph.Graph):
+        print('The provided graph is not a valid NetworkX undirected graph.')
+        return
+
+    def bron_kerbosch(r, p, x):
         if not p and not x:
             if len(r) > 2:
                 return r
@@ -162,29 +166,29 @@ def find_a_maximal_clique(g, pivoting=True, print_clique=True):
             for v in {*p}:
                 return bron_kerbosch(r | {v}, p & {*g.neighbors(v)}, x & {*g.neighbors(v)})
 
-    def bron_kerbosch_pivoting(r, p, x):
+    def bron_kerbosch_tomita_pivoting(r, p, x):
         if not p and not x:
             if len(r) > 2:
                 return r
         else:
             u = max({(v, len({n for n in g.neighbors(v) if n in p})) for v in p | x}, key=lambda v: v[1])[0]
             for v in p - {*g.neighbors(u)}:
-                return bron_kerbosch_pivoting(r | {v}, p & {*g.neighbors(v)}, x & {*g.neighbors(v)})
+                return bron_kerbosch_tomita_pivoting(r | {v}, p & {*g.neighbors(v)}, x & {*g.neighbors(v)})
 
     if g.nodes:
         # Initialization
-        r = {*()}  # TODO https://stackoverflow.com/questions/6130374/empty-set-literal is faster
+        r = {*()}
         p = {*g.nodes}
         x = {*()}
 
         # Bron-Kerbosch algorithm
-        if pivoting:
-            clique = bron_kerbosch_pivoting(r, p, x)
+        if tomita:
+            clique = bron_kerbosch_tomita_pivoting(r, p, x)
         else:
             clique = bron_kerbosch(r, p, x)
 
         # Printing
-        if print_clique:
+        if print_result:
             print(clique)
 
         return clique
@@ -193,8 +197,12 @@ def find_a_maximal_clique(g, pivoting=True, print_clique=True):
         return
 
 
-def find_all_maximal_cliques(g, pivoting=True, print_cliques=False):
-    def bron_kerbosch(r, p, x):  # TODO https://en.wikipedia.org/wiki/Bron%E2%80%93Kerbosch_algorithm
+def find_all_maximal_cliques(g, tomita=True, print_result=False):
+    if not isinstance(g, nx.classes.graph.Graph):
+        print('The provided graph is not a valid NetworkX undirected graph.')
+        return
+
+    def bron_kerbosch(r, p, x):
         if not p and not x:
             if len(r) > 2:
                 yield r
@@ -204,14 +212,14 @@ def find_all_maximal_cliques(g, pivoting=True, print_cliques=False):
                 p = p - {v}
                 x.add(v)
 
-    def bron_kerbosch_pivoting(r, p, x):
+    def bron_kerbosch_tomita_pivoting(r, p, x):
         if not p and not x:
             if len(r) > 2:
                 yield r
         else:
             u = max({(v, len({n for n in g.neighbors(v) if n in p})) for v in p | x}, key=lambda v: v[1])[0]
             for v in p - {*g.neighbors(u)}:
-                yield from bron_kerbosch_pivoting(r | {v}, p & {*g.neighbors(v)}, x & {*g.neighbors(v)})
+                yield from bron_kerbosch_tomita_pivoting(r | {v}, p & {*g.neighbors(v)}, x & {*g.neighbors(v)})
                 p = p - {v}
                 x.add(v)
 
@@ -222,16 +230,16 @@ def find_all_maximal_cliques(g, pivoting=True, print_cliques=False):
         x = {*()}
 
         # Bron-Kerbosch algorithm
-        if pivoting:
-            cliques = bron_kerbosch_pivoting(r, p, x)
+        if tomita:
+            cliques = bron_kerbosch_tomita_pivoting(r, p, x)
         else:
             cliques = bron_kerbosch(r, p, x)
 
         # Printing
-        if print_cliques:
+        if print_result:
             print(*cliques, sep='\n')
 
-        return cliques
+        return list(cliques)
 
     else:
         print('The provided graph is empty.')
@@ -299,11 +307,11 @@ def main(args):
 
 
     # Find and print a maximal clique
-    find_a_maximal_clique(g, print_clique=True)
+    find_a_maximal_clique(g, print_result=True)
 
     # Find and print all maximal cliques in a random subgraph of 100 nodes
     subgraph = sample_random_subgraph(g, 100)
-    find_all_maximal_cliques(subgraph, print_cliques=True)
+    find_all_maximal_cliques(subgraph, print_result=True)
 
     # TODO Timing
     '''
