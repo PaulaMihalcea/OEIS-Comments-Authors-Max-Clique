@@ -153,51 +153,43 @@ def load_json_graph(file_path):
         return nx.readwrite.json_graph.node_link_graph(json.load(file))
 
 
-def find_a_maximal_clique(g, tomita=True, print_result=True):
+def find_one_maximal_clique(g, print_result=False):
+    # Check if g is a NetworkX graph
     if not isinstance(g, nx.classes.graph.Graph):
         print('The provided graph is not a valid NetworkX undirected graph.')
         return
 
-    def bron_kerbosch(r, p, x):
-        if not p and not x:
-            if len(r) > 2:
-                return r
-        else:
-            for v in {*p}:
-                return bron_kerbosch(r | {v}, p & {*g.neighbors(v)}, x & {*g.neighbors(v)})
-
-    def bron_kerbosch_tomita_pivoting(r, p, x):
-        if not p and not x:
-            if len(r) > 2:
-                return r
-        else:
-            u = max({(v, len({n for n in g.neighbors(v) if n in p})) for v in p | x}, key=lambda v: v[1])[0]
-            for v in p - {*g.neighbors(u)}:
-                return bron_kerbosch_tomita_pivoting(r | {v}, p & {*g.neighbors(v)}, x & {*g.neighbors(v)})
-
     if g.nodes:
         # Initialization
-        r = {*()}
-        p = {*g.nodes}
-        x = {*()}
+        vertices = list(g.nodes)
+        start_node = random.choice(vertices)
+        vertices.remove(start_node)
+        clique = {start_node}
 
-        # Bron-Kerbosch algorithm
-        if tomita:
-            clique = bron_kerbosch_tomita_pivoting(r, p, x)
+        # Greedy algorithm
+        for v in vertices:
+            valid = True
+            for u in clique:
+                if not g.has_edge(v, u):
+                    valid = False
+                    break
+            if valid:
+                clique.add(v)
+
+        # Result & printing
+        if len(clique) > 2:
+            if print_result:
+                print(clique)
+            return clique
         else:
-            clique = bron_kerbosch(r, p, x)
-
-        # Printing
-        if print_result:
-            print(clique)
-
-        return clique
+            return
     else:
         print('The provided graph is empty.')
         return
 
 
 def find_all_maximal_cliques(g, tomita=True, print_result=False):
+    # Check if g is a NetworkX graph
     if not isinstance(g, nx.classes.graph.Graph):
         print('The provided graph is not a valid NetworkX undirected graph.')
         return
