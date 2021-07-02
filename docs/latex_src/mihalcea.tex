@@ -1,0 +1,2456 @@
+\documentclass[11pt]{article}
+
+    \usepackage{biblatex}
+    \addbibresource{bibliography.bib}
+    \usepackage{parskip}
+    %\setcounter{secnumdepth}{0} %Suppress section numbers
+    \usepackage[ruled,vlined]{algorithm2e}
+    \usepackage[breakable]{tcolorbox}
+    \usepackage{parskip} % Stop auto-indenting (to mimic markdown behaviour)
+\usepackage{amsthm,xparse}
+\usepackage{etoolbox}
+\usepackage{algpseudocode}
+    
+    \usepackage{iftex}
+    \ifPDFTeX
+    	\usepackage[T1]{fontenc}
+    	\usepackage{mathpazo}
+    \else
+    	\usepackage{fontspec}
+    \fi
+    \newtheorem*{definition}{Def}
+    \newtheorem*{fact}{Fact}
+
+    % Basic figure setup, for now with no caption control since it's done
+    % automatically by Pandoc (which extracts ![](path) syntax from Markdown).
+    \usepackage{graphicx}
+    % Maintain compatibility with old templates. Remove in nbconvert 6.0
+    \let\Oldincludegraphics\includegraphics
+    % Ensure that by default, figures have no caption (until we provide a
+    % proper Figure object with a Caption API and a way to capture that
+    % in the conversion process - todo).
+    \usepackage{caption}
+    %\DeclareCaptionFormat{nocaption}{}
+    %\captionsetup{format=nocaption,aboveskip=0pt,belowskip=0pt}
+
+    \usepackage[Export]{adjustbox} % Used to constrain images to a maximum size
+    \adjustboxset{max size={0.9\linewidth}{0.9\paperheight}}
+    \usepackage{float}
+    \floatplacement{figure}{H} % forces figures to be placed at the correct location
+    \usepackage{xcolor} % Allow colors to be defined
+    \usepackage{enumerate} % Needed for markdown enumerations to work
+    \usepackage{geometry} % Used to adjust the document margins
+    \usepackage{amsmath} % Equations
+    \usepackage{amssymb} % Equations
+    \usepackage{textcomp} % defines textquotesingle
+    % Hack from http://tex.stackexchange.com/a/47451/13684:
+    \AtBeginDocument{%
+        \def\PYZsq{\textquotesingle}% Upright quotes in Pygmentized code
+    }
+    \usepackage{upquote} % Upright quotes for verbatim code
+    \usepackage{eurosym} % defines \euro
+    %\usepackage[mathletters]{ucs} % Extended unicode (utf-8) support
+    \usepackage[utf8]{inputenc}
+    \usepackage{fancyvrb} % verbatim replacement that allows latex
+    \usepackage{grffile} % extends the file name processing of package graphics 
+                         % to support a larger range
+    \makeatletter % fix for grffile with XeLaTeX
+    \def\Gread@@xetex#1{%
+      \IfFileExists{"\Gin@base".bb}%
+      {\Gread@eps{\Gin@base.bb}}%
+      {\Gread@@xetex@aux#1}%
+    }
+    \makeatother
+
+    % The hyperref package gives us a pdf with properly built
+    % internal navigation ('pdf bookmarks' for the table of contents,
+    % internal cross-reference links, web links for URLs, etc.)
+    \usepackage{hyperref}
+    % The default LaTeX title has an obnoxious amount of whitespace. By default,
+    % titling removes some of it. It also provides customization options.
+    \usepackage{titling}
+    \usepackage{longtable} % longtable support required by pandoc >1.10
+    \usepackage{booktabs}  % table support for pandoc > 1.12.2
+    \usepackage[inline]{enumitem} % IRkernel/repr support (it uses the enumerate* environment)
+    \usepackage[normalem]{ulem} % ulem is needed to support strikethroughs (\sout)
+                                % normalem makes italics be italics, not underlines
+    \usepackage{mathrsfs}
+    
+
+    
+    % Colors for the hyperref package
+    \definecolor{urlcolor}{rgb}{0,.145,.698}
+    \definecolor{linkcolor}{rgb}{.71,0.21,0.01}
+    \definecolor{citecolor}{rgb}{.12,.54,.11}
+
+    % ANSI colors
+    \definecolor{ansi-black}{HTML}{3E424D}
+    \definecolor{ansi-black-intense}{HTML}{282C36}
+    \definecolor{ansi-red}{HTML}{E75C58}
+    \definecolor{ansi-red-intense}{HTML}{B22B31}
+    \definecolor{ansi-green}{HTML}{00A250}
+    \definecolor{ansi-green-intense}{HTML}{007427}
+    \definecolor{ansi-yellow}{HTML}{DDB62B}
+    \definecolor{ansi-yellow-intense}{HTML}{B27D12}
+    \definecolor{ansi-blue}{HTML}{208FFB}
+    \definecolor{ansi-blue-intense}{HTML}{0065CA}
+    \definecolor{ansi-magenta}{HTML}{D160C4}
+    \definecolor{ansi-magenta-intense}{HTML}{A03196}
+    \definecolor{ansi-cyan}{HTML}{60C6C8}
+    \definecolor{ansi-cyan-intense}{HTML}{258F8F}
+    \definecolor{ansi-white}{HTML}{C5C1B4}
+    \definecolor{ansi-white-intense}{HTML}{A1A6B2}
+    \definecolor{ansi-default-inverse-fg}{HTML}{FFFFFF}
+    \definecolor{ansi-default-inverse-bg}{HTML}{000000}
+
+    % commands and environments needed by pandoc snippets
+    % extracted from the output of `pandoc -s`
+    \providecommand{\tightlist}{%
+      \setlength{\itemsep}{0pt}\setlength{\parskip}{0pt}}
+    \DefineVerbatimEnvironment{Highlighting}{Verbatim}{commandchars=\\\{\}}
+    % Add ',fontsize=\small' for more characters per line
+    \newenvironment{Shaded}{}{}
+    \newcommand{\KeywordTok}[1]{\textcolor[rgb]{0.00,0.44,0.13}{\textbf{{#1}}}}
+    \newcommand{\DataTypeTok}[1]{\textcolor[rgb]{0.56,0.13,0.00}{{#1}}}
+    \newcommand{\DecValTok}[1]{\textcolor[rgb]{0.25,0.63,0.44}{{#1}}}
+    \newcommand{\BaseNTok}[1]{\textcolor[rgb]{0.25,0.63,0.44}{{#1}}}
+    \newcommand{\FloatTok}[1]{\textcolor[rgb]{0.25,0.63,0.44}{{#1}}}
+    \newcommand{\CharTok}[1]{\textcolor[rgb]{0.25,0.44,0.63}{{#1}}}
+    \newcommand{\StringTok}[1]{\textcolor[rgb]{0.25,0.44,0.63}{{#1}}}
+    \newcommand{\CommentTok}[1]{\textcolor[rgb]{0.38,0.63,0.69}{\textit{{#1}}}}
+    \newcommand{\OtherTok}[1]{\textcolor[rgb]{0.00,0.44,0.13}{{#1}}}
+    \newcommand{\AlertTok}[1]{\textcolor[rgb]{1.00,0.00,0.00}{\textbf{{#1}}}}
+    \newcommand{\FunctionTok}[1]{\textcolor[rgb]{0.02,0.16,0.49}{{#1}}}
+    \newcommand{\RegionMarkerTok}[1]{{#1}}
+    \newcommand{\ErrorTok}[1]{\textcolor[rgb]{1.00,0.00,0.00}{\textbf{{#1}}}}
+    \newcommand{\NormalTok}[1]{{#1}}
+    
+    % Additional commands for more recent versions of Pandoc
+    \newcommand{\ConstantTok}[1]{\textcolor[rgb]{0.53,0.00,0.00}{{#1}}}
+    \newcommand{\SpecialCharTok}[1]{\textcolor[rgb]{0.25,0.44,0.63}{{#1}}}
+    \newcommand{\VerbatimStringTok}[1]{\textcolor[rgb]{0.25,0.44,0.63}{{#1}}}
+    \newcommand{\SpecialStringTok}[1]{\textcolor[rgb]{0.73,0.40,0.53}{{#1}}}
+    \newcommand{\ImportTok}[1]{{#1}}
+    \newcommand{\DocumentationTok}[1]{\textcolor[rgb]{0.73,0.13,0.13}{\textit{{#1}}}}
+    \newcommand{\AnnotationTok}[1]{\textcolor[rgb]{0.38,0.63,0.69}{\textbf{\textit{{#1}}}}}
+    \newcommand{\CommentVarTok}[1]{\textcolor[rgb]{0.38,0.63,0.69}{\textbf{\textit{{#1}}}}}
+    \newcommand{\VariableTok}[1]{\textcolor[rgb]{0.10,0.09,0.49}{{#1}}}
+    \newcommand{\ControlFlowTok}[1]{\textcolor[rgb]{0.00,0.44,0.13}{\textbf{{#1}}}}
+    \newcommand{\OperatorTok}[1]{\textcolor[rgb]{0.40,0.40,0.40}{{#1}}}
+    \newcommand{\BuiltInTok}[1]{{#1}}
+    \newcommand{\ExtensionTok}[1]{{#1}}
+    \newcommand{\PreprocessorTok}[1]{\textcolor[rgb]{0.74,0.48,0.00}{{#1}}}
+    \newcommand{\AttributeTok}[1]{\textcolor[rgb]{0.49,0.56,0.16}{{#1}}}
+    \newcommand{\InformationTok}[1]{\textcolor[rgb]{0.38,0.63,0.69}{\textbf{\textit{{#1}}}}}
+    \newcommand{\WarningTok}[1]{\textcolor[rgb]{0.38,0.63,0.69}{\textbf{\textit{{#1}}}}}
+    
+    
+    % Define a nice break command that doesn't care if a line doesn't already
+    % exist.
+    \def\br{\hspace*{\fill} \\* }
+    % Math Jax compatibility definitions
+    \def\gt{>}
+    \def\lt{<}
+    \let\Oldtex\TeX
+    \let\Oldlatex\LaTeX
+    \renewcommand{\TeX}{\textrm{\Oldtex}}
+    \renewcommand{\LaTeX}{\textrm{\Oldlatex}}
+    % Document parameters
+    % Document title
+    \title{OEIS: Maximal Cliques of Authors from Comments}
+    
+    
+    
+    
+    
+% Pygments definitions
+\makeatletter
+\def\PY@reset{\let\PY@it=\relax \let\PY@bf=\relax%
+    \let\PY@ul=\relax \let\PY@tc=\relax%
+    \let\PY@bc=\relax \let\PY@ff=\relax}
+\def\PY@tok#1{\csname PY@tok@#1\endcsname}
+\def\PY@toks#1+{\ifx\relax#1\empty\else%
+    \PY@tok{#1}\expandafter\PY@toks\fi}
+\def\PY@do#1{\PY@bc{\PY@tc{\PY@ul{%
+    \PY@it{\PY@bf{\PY@ff{#1}}}}}}}
+\def\PY#1#2{\PY@reset\PY@toks#1+\relax+\PY@do{#2}}
+
+\expandafter\def\csname PY@tok@gd\endcsname{\def\PY@tc##1{\textcolor[rgb]{0.63,0.00,0.00}{##1}}}
+\expandafter\def\csname PY@tok@gu\endcsname{\let\PY@bf=\textbf\def\PY@tc##1{\textcolor[rgb]{0.50,0.00,0.50}{##1}}}
+\expandafter\def\csname PY@tok@gt\endcsname{\def\PY@tc##1{\textcolor[rgb]{0.00,0.27,0.87}{##1}}}
+\expandafter\def\csname PY@tok@gs\endcsname{\let\PY@bf=\textbf}
+\expandafter\def\csname PY@tok@gr\endcsname{\def\PY@tc##1{\textcolor[rgb]{1.00,0.00,0.00}{##1}}}
+\expandafter\def\csname PY@tok@cm\endcsname{\let\PY@it=\textit\def\PY@tc##1{\textcolor[rgb]{0.25,0.50,0.50}{##1}}}
+\expandafter\def\csname PY@tok@vg\endcsname{\def\PY@tc##1{\textcolor[rgb]{0.10,0.09,0.49}{##1}}}
+\expandafter\def\csname PY@tok@vi\endcsname{\def\PY@tc##1{\textcolor[rgb]{0.10,0.09,0.49}{##1}}}
+\expandafter\def\csname PY@tok@vm\endcsname{\def\PY@tc##1{\textcolor[rgb]{0.10,0.09,0.49}{##1}}}
+\expandafter\def\csname PY@tok@mh\endcsname{\def\PY@tc##1{\textcolor[rgb]{0.40,0.40,0.40}{##1}}}
+\expandafter\def\csname PY@tok@cs\endcsname{\let\PY@it=\textit\def\PY@tc##1{\textcolor[rgb]{0.25,0.50,0.50}{##1}}}
+\expandafter\def\csname PY@tok@ge\endcsname{\let\PY@it=\textit}
+\expandafter\def\csname PY@tok@vc\endcsname{\def\PY@tc##1{\textcolor[rgb]{0.10,0.09,0.49}{##1}}}
+\expandafter\def\csname PY@tok@il\endcsname{\def\PY@tc##1{\textcolor[rgb]{0.40,0.40,0.40}{##1}}}
+\expandafter\def\csname PY@tok@go\endcsname{\def\PY@tc##1{\textcolor[rgb]{0.53,0.53,0.53}{##1}}}
+\expandafter\def\csname PY@tok@cp\endcsname{\def\PY@tc##1{\textcolor[rgb]{0.74,0.48,0.00}{##1}}}
+\expandafter\def\csname PY@tok@gi\endcsname{\def\PY@tc##1{\textcolor[rgb]{0.00,0.63,0.00}{##1}}}
+\expandafter\def\csname PY@tok@gh\endcsname{\let\PY@bf=\textbf\def\PY@tc##1{\textcolor[rgb]{0.00,0.00,0.50}{##1}}}
+\expandafter\def\csname PY@tok@ni\endcsname{\let\PY@bf=\textbf\def\PY@tc##1{\textcolor[rgb]{0.60,0.60,0.60}{##1}}}
+\expandafter\def\csname PY@tok@nl\endcsname{\def\PY@tc##1{\textcolor[rgb]{0.63,0.63,0.00}{##1}}}
+\expandafter\def\csname PY@tok@nn\endcsname{\let\PY@bf=\textbf\def\PY@tc##1{\textcolor[rgb]{0.00,0.00,1.00}{##1}}}
+\expandafter\def\csname PY@tok@no\endcsname{\def\PY@tc##1{\textcolor[rgb]{0.53,0.00,0.00}{##1}}}
+\expandafter\def\csname PY@tok@na\endcsname{\def\PY@tc##1{\textcolor[rgb]{0.49,0.56,0.16}{##1}}}
+\expandafter\def\csname PY@tok@nb\endcsname{\def\PY@tc##1{\textcolor[rgb]{0.00,0.50,0.00}{##1}}}
+\expandafter\def\csname PY@tok@nc\endcsname{\let\PY@bf=\textbf\def\PY@tc##1{\textcolor[rgb]{0.00,0.00,1.00}{##1}}}
+\expandafter\def\csname PY@tok@nd\endcsname{\def\PY@tc##1{\textcolor[rgb]{0.67,0.13,1.00}{##1}}}
+\expandafter\def\csname PY@tok@ne\endcsname{\let\PY@bf=\textbf\def\PY@tc##1{\textcolor[rgb]{0.82,0.25,0.23}{##1}}}
+\expandafter\def\csname PY@tok@nf\endcsname{\def\PY@tc##1{\textcolor[rgb]{0.00,0.00,1.00}{##1}}}
+\expandafter\def\csname PY@tok@si\endcsname{\let\PY@bf=\textbf\def\PY@tc##1{\textcolor[rgb]{0.73,0.40,0.53}{##1}}}
+\expandafter\def\csname PY@tok@s2\endcsname{\def\PY@tc##1{\textcolor[rgb]{0.73,0.13,0.13}{##1}}}
+\expandafter\def\csname PY@tok@nt\endcsname{\let\PY@bf=\textbf\def\PY@tc##1{\textcolor[rgb]{0.00,0.50,0.00}{##1}}}
+\expandafter\def\csname PY@tok@nv\endcsname{\def\PY@tc##1{\textcolor[rgb]{0.10,0.09,0.49}{##1}}}
+\expandafter\def\csname PY@tok@s1\endcsname{\def\PY@tc##1{\textcolor[rgb]{0.73,0.13,0.13}{##1}}}
+\expandafter\def\csname PY@tok@dl\endcsname{\def\PY@tc##1{\textcolor[rgb]{0.73,0.13,0.13}{##1}}}
+\expandafter\def\csname PY@tok@ch\endcsname{\let\PY@it=\textit\def\PY@tc##1{\textcolor[rgb]{0.25,0.50,0.50}{##1}}}
+\expandafter\def\csname PY@tok@m\endcsname{\def\PY@tc##1{\textcolor[rgb]{0.40,0.40,0.40}{##1}}}
+\expandafter\def\csname PY@tok@gp\endcsname{\let\PY@bf=\textbf\def\PY@tc##1{\textcolor[rgb]{0.00,0.00,0.50}{##1}}}
+\expandafter\def\csname PY@tok@sh\endcsname{\def\PY@tc##1{\textcolor[rgb]{0.73,0.13,0.13}{##1}}}
+\expandafter\def\csname PY@tok@ow\endcsname{\let\PY@bf=\textbf\def\PY@tc##1{\textcolor[rgb]{0.67,0.13,1.00}{##1}}}
+\expandafter\def\csname PY@tok@sx\endcsname{\def\PY@tc##1{\textcolor[rgb]{0.00,0.50,0.00}{##1}}}
+\expandafter\def\csname PY@tok@bp\endcsname{\def\PY@tc##1{\textcolor[rgb]{0.00,0.50,0.00}{##1}}}
+\expandafter\def\csname PY@tok@c1\endcsname{\let\PY@it=\textit\def\PY@tc##1{\textcolor[rgb]{0.25,0.50,0.50}{##1}}}
+\expandafter\def\csname PY@tok@fm\endcsname{\def\PY@tc##1{\textcolor[rgb]{0.00,0.00,1.00}{##1}}}
+\expandafter\def\csname PY@tok@o\endcsname{\def\PY@tc##1{\textcolor[rgb]{0.40,0.40,0.40}{##1}}}
+\expandafter\def\csname PY@tok@kc\endcsname{\let\PY@bf=\textbf\def\PY@tc##1{\textcolor[rgb]{0.00,0.50,0.00}{##1}}}
+\expandafter\def\csname PY@tok@c\endcsname{\let\PY@it=\textit\def\PY@tc##1{\textcolor[rgb]{0.25,0.50,0.50}{##1}}}
+\expandafter\def\csname PY@tok@mf\endcsname{\def\PY@tc##1{\textcolor[rgb]{0.40,0.40,0.40}{##1}}}
+\expandafter\def\csname PY@tok@err\endcsname{\def\PY@bc##1{\setlength{\fboxsep}{0pt}\fcolorbox[rgb]{1.00,0.00,0.00}{1,1,1}{\strut ##1}}}
+\expandafter\def\csname PY@tok@mb\endcsname{\def\PY@tc##1{\textcolor[rgb]{0.40,0.40,0.40}{##1}}}
+\expandafter\def\csname PY@tok@ss\endcsname{\def\PY@tc##1{\textcolor[rgb]{0.10,0.09,0.49}{##1}}}
+\expandafter\def\csname PY@tok@sr\endcsname{\def\PY@tc##1{\textcolor[rgb]{0.73,0.40,0.53}{##1}}}
+\expandafter\def\csname PY@tok@mo\endcsname{\def\PY@tc##1{\textcolor[rgb]{0.40,0.40,0.40}{##1}}}
+\expandafter\def\csname PY@tok@kd\endcsname{\let\PY@bf=\textbf\def\PY@tc##1{\textcolor[rgb]{0.00,0.50,0.00}{##1}}}
+\expandafter\def\csname PY@tok@mi\endcsname{\def\PY@tc##1{\textcolor[rgb]{0.40,0.40,0.40}{##1}}}
+\expandafter\def\csname PY@tok@kn\endcsname{\let\PY@bf=\textbf\def\PY@tc##1{\textcolor[rgb]{0.00,0.50,0.00}{##1}}}
+\expandafter\def\csname PY@tok@cpf\endcsname{\let\PY@it=\textit\def\PY@tc##1{\textcolor[rgb]{0.25,0.50,0.50}{##1}}}
+\expandafter\def\csname PY@tok@kr\endcsname{\let\PY@bf=\textbf\def\PY@tc##1{\textcolor[rgb]{0.00,0.50,0.00}{##1}}}
+\expandafter\def\csname PY@tok@s\endcsname{\def\PY@tc##1{\textcolor[rgb]{0.73,0.13,0.13}{##1}}}
+\expandafter\def\csname PY@tok@kp\endcsname{\def\PY@tc##1{\textcolor[rgb]{0.00,0.50,0.00}{##1}}}
+\expandafter\def\csname PY@tok@w\endcsname{\def\PY@tc##1{\textcolor[rgb]{0.73,0.73,0.73}{##1}}}
+\expandafter\def\csname PY@tok@kt\endcsname{\def\PY@tc##1{\textcolor[rgb]{0.69,0.00,0.25}{##1}}}
+\expandafter\def\csname PY@tok@sc\endcsname{\def\PY@tc##1{\textcolor[rgb]{0.73,0.13,0.13}{##1}}}
+\expandafter\def\csname PY@tok@sb\endcsname{\def\PY@tc##1{\textcolor[rgb]{0.73,0.13,0.13}{##1}}}
+\expandafter\def\csname PY@tok@sa\endcsname{\def\PY@tc##1{\textcolor[rgb]{0.73,0.13,0.13}{##1}}}
+\expandafter\def\csname PY@tok@k\endcsname{\let\PY@bf=\textbf\def\PY@tc##1{\textcolor[rgb]{0.00,0.50,0.00}{##1}}}
+\expandafter\def\csname PY@tok@se\endcsname{\let\PY@bf=\textbf\def\PY@tc##1{\textcolor[rgb]{0.73,0.40,0.13}{##1}}}
+\expandafter\def\csname PY@tok@sd\endcsname{\let\PY@it=\textit\def\PY@tc##1{\textcolor[rgb]{0.73,0.13,0.13}{##1}}}
+
+\def\PYZbs{\char`\\}
+\def\PYZus{\char`\_}
+\def\PYZob{\char`\{}
+\def\PYZcb{\char`\}}
+\def\PYZca{\char`\^}
+\def\PYZam{\char`\&}
+\def\PYZlt{\char`\<}
+\def\PYZgt{\char`\>}
+\def\PYZsh{\char`\#}
+\def\PYZpc{\char`\%}
+\def\PYZdl{\char`\$}
+\def\PYZhy{\char`\-}
+\def\PYZsq{\char`\'}
+\def\PYZdq{\char`\"}
+\def\PYZti{\char`\~}
+% for compatibility with earlier versions
+\def\PYZat{@}
+\def\PYZlb{[}
+\def\PYZrb{]}
+\makeatother
+
+
+    % For linebreaks inside Verbatim environment from package fancyvrb. 
+    \makeatletter
+        \newbox\Wrappedcontinuationbox 
+        \newbox\Wrappedvisiblespacebox 
+        \newcommand*\Wrappedvisiblespace {} 
+        \newcommand*\Wrappedcontinuationsymbol {\textcolor{red}{\llap{}}} 
+        \newcommand*\Wrappedcontinuationindent {3ex } 
+        \newcommand*\Wrappedafterbreak {\kern\Wrappedcontinuationindent\copy\Wrappedcontinuationbox} 
+        % Take advantage of the already applied Pygments mark-up to insert 
+        % potential linebreaks for TeX processing. 
+        %        {, <, #, %, $, ' and ": go to next line. 
+        %        _, }, ^, &, >, - and ~: stay at end of broken line. 
+        % Use of \textquotesingle for straight quote. 
+        \newcommand*\Wrappedbreaksatspecials {% 
+            \def\PYGZus{\discretionary{\char`\_}{\Wrappedafterbreak}{\char`\_}}% 
+            \def\PYGZob{\discretionary{}{\Wrappedafterbreak\char`\{}{\char`\{}}% 
+            \def\PYGZcb{\discretionary{\char`\}}{\Wrappedafterbreak}{\char`\}}}% 
+            \def\PYGZca{\discretionary{\char`\^}{\Wrappedafterbreak}{\char`\^}}% 
+            \def\PYGZam{\discretionary{\char`\&}{\Wrappedafterbreak}{\char`\&}}% 
+            \def\PYGZlt{\discretionary{}{\Wrappedafterbreak\char`\<}{\char`\<}}% 
+            \def\PYGZgt{\discretionary{\char`\>}{\Wrappedafterbreak}{\char`\>}}% 
+            \def\PYGZsh{\discretionary{}{\Wrappedafterbreak\char`\#}{\char`\#}}% 
+            \def\PYGZpc{\discretionary{}{\Wrappedafterbreak\char`\%}{\char`\%}}% 
+            \def\PYGZdl{\discretionary{}{\Wrappedafterbreak\char`\$}{\char`\$}}% 
+            \def\PYGZhy{\discretionary{\char`\-}{\Wrappedafterbreak}{\char`\-}}% 
+            \def\PYGZsq{\discretionary{}{\Wrappedafterbreak\textquotesingle}{\textquotesingle}}% 
+            \def\PYGZdq{\discretionary{}{\Wrappedafterbreak\char`\"}{\char`\"}}% 
+            \def\PYGZti{\discretionary{\char`\~}{\Wrappedafterbreak}{\char`\~}}% 
+        } 
+        % Some characters . , ; ? ! / are not pygmentized. 
+        % This macro makes them "active" and they will insert potential linebreaks 
+        \newcommand*\Wrappedbreaksatpunct {% 
+            \lccode`\~`\.\lowercase{\def~}{\discretionary{\hbox{\char`\.}}{\Wrappedafterbreak}{\hbox{\char`\.}}}% 
+            \lccode`\~`\,\lowercase{\def~}{\discretionary{\hbox{\char`\,}}{\Wrappedafterbreak}{\hbox{\char`\,}}}% 
+            \lccode`\~`\;\lowercase{\def~}{\discretionary{\hbox{\char`\;}}{\Wrappedafterbreak}{\hbox{\char`\;}}}% 
+            \lccode`\~`\:\lowercase{\def~}{\discretionary{\hbox{\char`\:}}{\Wrappedafterbreak}{\hbox{\char`\:}}}% 
+            \lccode`\~`\?\lowercase{\def~}{\discretionary{\hbox{\char`\?}}{\Wrappedafterbreak}{\hbox{\char`\?}}}% 
+            \lccode`\~`\!\lowercase{\def~}{\discretionary{\hbox{\char`\!}}{\Wrappedafterbreak}{\hbox{\char`\!}}}% 
+            \lccode`\~`\/\lowercase{\def~}{\discretionary{\hbox{\char`\/}}{\Wrappedafterbreak}{\hbox{\char`\/}}}% 
+            \catcode`\.\active
+            \catcode`\,\active 
+            \catcode`\;\active
+            \catcode`\:\active
+            \catcode`\?\active
+            \catcode`\!\active
+            \catcode`\/\active 
+            \lccode`\~`\~ 	
+        }
+    \makeatother
+
+    \let\OriginalVerbatim=\Verbatim
+    \makeatletter
+    \renewcommand{\Verbatim}[1][1]{%
+        %\parskip\z@skip
+        \sbox\Wrappedcontinuationbox {\Wrappedcontinuationsymbol}%
+        \sbox\Wrappedvisiblespacebox {\FV@SetupFont\Wrappedvisiblespace}%
+        \def\FancyVerbFormatLine ##1{\hsize\linewidth
+            \vtop{\raggedright\hyphenpenalty\z@\exhyphenpenalty\z@
+                \doublehyphendemerits\z@\finalhyphendemerits\z@
+                \strut ##1\strut}%
+        }%
+        % If the linebreak is at a space, the latter will be displayed as visible
+        % space at end of first line, and a continuation symbol starts next line.
+        % Stretch/shrink are however usually zero for typewriter font.
+        \def\FV@Space {%
+            \nobreak\hskip\z@ plus\fontdimen3\font minus\fontdimen4\font
+            \discretionary{\copy\Wrappedvisiblespacebox}{\Wrappedafterbreak}
+            {\kern\fontdimen2\font}%
+        }%
+        
+        % Allow breaks at special characters using \PYG... macros.
+        \Wrappedbreaksatspecials
+        % Breaks at punctuation characters . , ; ? ! and / need catcode=\active 	
+        \OriginalVerbatim[#1,codes*=\Wrappedbreaksatpunct]%
+    }
+    \makeatother
+
+    % Exact colors from NB
+    \definecolor{incolor}{HTML}{303F9F}
+    \definecolor{outcolor}{HTML}{D84315}
+    \definecolor{cellborder}{HTML}{CFCFCF}
+    \definecolor{cellbackground}{HTML}{F7F7F7}
+    
+    % prompt
+    \makeatletter
+    \newcommand{\boxspacing}{\kern\kvtcb@left@rule\kern\kvtcb@boxsep}
+    \makeatother
+    \newcommand{\prompt}[4]{
+        \ttfamily\llap{{\color{#2}[#3]:\hspace{3pt}#4}}\vspace{-\baselineskip}
+    }
+    
+    %Updated MathJax Compatibility (if future behaviour of the notebook changes this may be removed)
+    \renewcommand{\TeX}{\ifmmode \textrm{\Oldtex} \else \textbackslash TeX \fi}
+    \renewcommand{\LaTeX}{\ifmmode \Oldlatex \else \textbackslash LaTeX \fi}
+    
+    
+    %Reconfigured pygments
+    \makeatletter
+    \expandafter\def\csname PY@tok@mi\endcsname{\def\PY@tc##1{\textcolor[HTML]{008800}{##1}}} %numbers
+    \expandafter\def\csname PY@tok@mf\endcsname{\def\PY@tc##1{\textcolor[HTML]{008800}{##1}}} %numbers
+    \expandafter\def\csname PY@tok@nn\endcsname{\def\PY@tc##1{\textcolor[HTML]{000000}{##1}}} %imports
+    \expandafter\def\csname PY@tok@ow\endcsname{\let\PY@bf=\textbf\def\PY@tc##1{\textcolor[HTML]{008000}{##1}}} %operator.word
+    \expandafter\def\csname PY@tok@o\endcsname{\def\PY@tc##1{\textcolor[HTML]{AA22FF}{\codetrue##1\codefalse}}} %operator
+    \makeatother
+
+    \makeatletter
+    \newcommand*\@iflatexlater{\@ifl@t@r\fmtversion}
+    \@iflatexlater{2016/03/01}{
+	    \newcommand{\wordboundary}{4095}}{
+	    \newcommand{\wordboundary}{255}}
+    \makeatother
+
+    \newif\ifcode
+    \codefalse
+    \definecolor{Grey}{rgb}{0.40,0.40,0.40}
+    %If using XeLaTeX, use magic to not highlight . operators with purple.
+    \ifdefined\XeTeXcharclass
+    \XeTeXinterchartokenstate = 1
+    \newXeTeXintercharclass \mycharclassGrey
+    \XeTeXcharclass `. \mycharclassGrey
+    \XeTeXinterchartoks 0 \mycharclassGrey   = {\bgroup\ifcode\color{Grey}\else\fi}
+
+    \XeTeXinterchartoks \wordboundary \mycharclassGrey = {\bgroup\ifcode\color{Grey}\else\fi}
+
+    \XeTeXinterchartoks \mycharclassGrey 0   = {\egroup}
+    \XeTeXinterchartoks \mycharclassGrey \wordboundary = {\egroup}
+    \fi %end magical operator highlighting
+    %End Reconfigured Pygments
+    
+
+    % Header Adjustments
+    \renewcommand{\paragraph}{\textbf}
+    \renewcommand{\subparagraph}[1]{\textit{\textbf{#1}}}
+
+    
+    % Prevent overflowing lines due to hard-to-break entities
+    \sloppy 
+    % Setup hyperref package
+    \hypersetup{
+      breaklinks=true,  % so long urls are correctly broken across lines
+      colorlinks=true,
+      urlcolor=urlcolor,
+      linkcolor=linkcolor,
+      citecolor=citecolor,
+      }
+    % Slightly bigger margins than the latex defaults
+    \geometry{verbose,tmargin=.5in,bmargin=.7in,lmargin=.7in,rmargin=.7in}
+    
+
+\begin{document}
+    
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+    
+\begin{titlepage}
+	\centering
+    \vspace*{0.5 cm}
+    \includegraphics[scale = 0.8]{img/unifi_logo.png}\\[1 cm]
+
+	\rule{\linewidth}{0.2 mm} \\[0.4 cm]
+	{ \huge \bfseries \thetitle}\\
+	\rule{\linewidth}{0.2 mm} \\[1 cm]
+
+	\textsc{\Large Advanced Algorithms and Graph Mining}\\[5 cm]
+	\begin{minipage}{0.5\textwidth}
+		\begin{flushleft} \large
+			\emph{Professors:}\\
+			Andrea Marino\\
+			Massimo Nocentini\\
+            		%\normalsize{Info su\\
+            		%dipartimento\\
+            		%del docente}\\
+			\end{flushleft}
+			\end{minipage}~
+			\begin{minipage}{0.4\textwidth}
+        
+		\begin{flushright} \large
+			\emph{Student:} \\
+			Paula Mihalcea
+		\end{flushright}
+        
+	\end{minipage}\\[0.1 cm]
+	
+	\vspace*{2.6 cm}
+	\begin{center} \large
+			July 2021
+		\end{center}
+
+	
+\end{titlepage}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+% BEGINTO
+
+\tableofcontents
+
+\section{Introduction}\label{introduction}
+
+\textbf{\href{https://oeis.org/}{OEIS}} is the online encyclopaedia of
+\textbf{integer sequences}. It lists thousands of number sequences in
+lexicographic order, such as the \href{http://oeis.org/A000040}{prime
+numbers} or the \href{http://oeis.org/A000045}{Fibonacci sequence},
+easing the work of countless researchers since 1964, its foundation
+year.
+
+The OEIS is made of a series of \textbf{JSON files}, one for each
+integer sequence. Given their regular, human-readable format, these
+files can be easily manipulated in order to further analyze them.
+Indeed, each page of the OEIS not only lists the integers of the
+corresponding sequence, but also a series of information such as
+formulas, references, links and comments.
+
+This work aims to create, step-by-step, a
+\textbf{\href{https://www.python.org/}{Python 3}} script capable of
+loading these files and parsing their content in order to build a
+\textbf{graph} where:
+
+\begin{itemize}
+    \item \textbf{nodes} represent all unique
+\textbf{authors} that can be found in each comment of every sequence,
+and \item \textbf{edges} link two authors who have \textbf{commented the
+same sequence}.
+\end{itemize}
+
+Three main algorithms are then implemented in order to find:
+
+\begin{enumerate}
+    \item a
+\textbf{maximal clique}; \item a list of \textbf{all maximal cliques}; \item the \textbf{maximum clique}.
+\end{enumerate}
+
+The library of choice for creating the graph is
+\textbf{\href{https://networkx.org/}{NetworkX}}, a fast Python module
+for the creation, manipulation, and study of the structure of complex
+networks. Other libraries such as
+\href{https://docs.python.org/3/library/itertools.html}{itertools},
+\href{https://numpy.org/}{NumPy},
+\href{https://docs.python.org/3/library/os.html}{os} and
+\href{https://docs.python.org/3/library/random.html}{random} are also
+used for efficiency purposes, as they provide highly optimized
+functions. The complete list of packages can be found in section \ref{requirements}.
+
+\section{Requirements}\label{requirements}
+
+Before starting, a series of packages must be installed for the
+subsequent code to be executable. The simplest way is to use
+\href{https://pypi.org/project/pip/}{\texttt{pip}}, a package manager
+for Python callable from the system terminal.
+
+The commands needed for this operation are listed in the following cell;
+the Jupyter magic function
+\href{https://ipython.readthedocs.io/en/stable/interactive/magics.html\#cellmagic-bash}{\texttt{\%\%cmd}}
+(\texttt{\%\%bash} for Unix users) at the beginning allows to use it as
+a terminal. Make sure to follow the recommended install order, as it
+helps avoiding errors which can sometimes be generated by different
+versions of the packages.
+
+Note: the \texttt{argparse} package is only needed for the execution of
+the \texttt{mihalcea.py} script, and is not necessary for the current
+Jupyter notebook.
+
+    \begin{tcolorbox}[breakable, size=fbox, boxrule=1pt, pad at break*=1mm,colback=cellbackground, colframe=cellborder]
+\prompt{In}{incolor}{1}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+\PY{o}{\PYZpc{}\PYZpc{}}\PY{k}{cmd}
+
+pip install numpy
+pip install networkx
+pip install tqdm
+pip install argparse
+\end{Verbatim}
+\end{tcolorbox}
+
+    The freshly installed modules can be now used by simply importing them,
+along with other native Python packages:
+
+    \begin{tcolorbox}[breakable, size=fbox, boxrule=1pt, pad at break*=1mm,colback=cellbackground, colframe=cellborder]
+\prompt{In}{incolor}{2}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+\PY{k+kn}{import} \PY{n+nn}{argparse} \PY{c+c1}{\PYZsh{} Only needed for the mihalcea.py script}
+\PY{k+kn}{import} \PY{n+nn}{itertools} \PY{k}{as} \PY{n+nn}{its}
+\PY{k+kn}{import} \PY{n+nn}{json}
+\PY{k+kn}{import} \PY{n+nn}{networkx} \PY{k}{as} \PY{n+nn}{nx}
+\PY{k+kn}{import} \PY{n+nn}{numpy} \PY{k}{as} \PY{n+nn}{np}
+\PY{k+kn}{import} \PY{n+nn}{os}
+\PY{k+kn}{import} \PY{n+nn}{random}
+\PY{k+kn}{import} \PY{n+nn}{re}
+\PY{k+kn}{import} \PY{n+nn}{timeit}
+\PY{k+kn}{import} \PY{n+nn}{tqdm}
+\PY{k+kn}{import} \PY{n+nn}{warnings}
+\end{Verbatim}
+\end{tcolorbox}
+
+\section{Sequence files}\label{dataset}
+
+Having installed the required packages, we can now proceed with
+analyzing the files.
+
+The raw OEIS sequence files can be found in
+\href{./data/sequences/}{\texttt{data/sequences}}. We can start by
+writing a function capable of opening one of them using the
+\href{https://docs.python.org/3/library/json.html}{JSON package}
+available in Python, and use it to load a file's content as a Python
+\href{https://docs.python.org/3/library/stdtypes.html\#mapping-types-dict}{dict},
+then print it:
+
+    \begin{tcolorbox}[breakable, size=fbox, boxrule=1pt, pad at break*=1mm,colback=cellbackground, colframe=cellborder]
+\prompt{In}{incolor}{3}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+\PY{k}{def} \PY{n+nf}{load\PYZus{}json}\PY{p}{(}\PY{n}{file\PYZus{}path}\PY{p}{,} \PY{n}{print\PYZus{}result}\PY{o}{=}\PY{k+kc}{False}\PY{p}{)}\PY{p}{:}
+    \PY{k}{try}\PY{p}{:}
+        \PY{k}{with} \PY{n+nb}{open}\PY{p}{(}\PY{n}{file\PYZus{}path}\PY{p}{,} \PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{r}\PY{l+s+s1}{\PYZsq{}}\PY{p}{)} \PY{k}{as} \PY{n}{file}\PY{p}{:}
+            \PY{n}{raw\PYZus{}data} \PY{o}{=} \PY{n}{json}\PY{o}{.}\PY{n}{load}\PY{p}{(}\PY{n}{file}\PY{p}{)}
+            \PY{k}{if} \PY{n}{print\PYZus{}result}\PY{p}{:}
+                \PY{n+nb}{print}\PY{p}{(}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{File }\PY{l+s+s1}{\PYZsq{}} \PY{o}{+} \PY{n}{file\PYZus{}path}\PY{o}{.}\PY{n}{split}\PY{p}{(}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{/}\PY{l+s+s1}{\PYZsq{}}\PY{p}{)}\PY{p}{[}\PY{o}{\PYZhy{}}\PY{l+m+mi}{1}\PY{p}{]} \PY{o}{+} \PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{ contents:}\PY{l+s+s1}{\PYZsq{}}\PY{p}{)}
+                \PY{n+nb}{print}\PY{p}{(}\PY{p}{)}
+                \PY{n+nb}{print}\PY{p}{(}\PY{n}{json}\PY{o}{.}\PY{n}{dumps}\PY{p}{(}\PY{n}{raw\PYZus{}data}\PY{p}{,} \PY{n}{indent}\PY{o}{=}\PY{k+kc}{True}\PY{p}{)}\PY{p}{)}
+                \PY{n+nb}{print}\PY{p}{(}\PY{p}{)}
+                \PY{n+nb}{print}\PY{p}{(}
+                    \PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{The }\PY{l+s+se}{\PYZbs{}\PYZsq{}}\PY{l+s+s1}{json}\PY{l+s+se}{\PYZbs{}\PYZsq{}}\PY{l+s+s1}{ Python module returns a dictionary, which can be confirmed by invoking the }\PY{l+s+se}{\PYZbs{}\PYZsq{}}\PY{l+s+s1}{type}\PY{l+s+se}{\PYZbs{}\PYZsq{}}\PY{l+s+s1}{ function on the loaded data: }\PY{l+s+s1}{\PYZsq{}} \PY{o}{+} \PY{n+nb}{str}\PY{p}{(}
+                        \PY{n+nb}{type}\PY{p}{(}\PY{n}{raw\PYZus{}data}\PY{p}{)}\PY{p}{)} \PY{o}{+} \PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{.}\PY{l+s+s1}{\PYZsq{}}\PY{p}{)}
+                \PY{n+nb}{print}\PY{p}{(}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{This dictionary}\PY{l+s+se}{\PYZbs{}\PYZsq{}}\PY{l+s+s1}{s keys are: }\PY{l+s+s1}{\PYZsq{}} \PY{o}{+} \PY{n+nb}{str}\PY{p}{(}\PY{n}{raw\PYZus{}data}\PY{o}{.}\PY{n}{keys}\PY{p}{(}\PY{p}{)}\PY{p}{)}\PY{o}{.}\PY{n}{replace}\PY{p}{(}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{dict\PYZus{}keys([}\PY{l+s+s1}{\PYZsq{}}\PY{p}{,} \PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{\PYZsq{}}\PY{p}{)}\PY{o}{.}\PY{n}{replace}\PY{p}{(}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{])}\PY{l+s+s1}{\PYZsq{}}\PY{p}{,}
+                                                                                                                \PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{\PYZsq{}}\PY{p}{)} \PY{o}{+} \PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{.}\PY{l+s+s1}{\PYZsq{}}\PY{p}{)}
+            \PY{k}{return} \PY{n}{raw\PYZus{}data}
+    \PY{k}{except} \PY{n+ne}{OSError}\PY{p}{:}
+        \PY{n+nb}{print}\PY{p}{(}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{Could not open file: }\PY{l+s+si}{\PYZob{}\PYZcb{}}\PY{l+s+s1}{, exiting program.}\PY{l+s+s1}{\PYZsq{}}\PY{o}{.}\PY{n}{format}\PY{p}{(}\PY{n}{file\PYZus{}path}\PY{o}{.}\PY{n}{split}\PY{p}{(}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{/}\PY{l+s+s1}{\PYZsq{}}\PY{p}{)}\PY{p}{[}\PY{o}{\PYZhy{}}\PY{l+m+mi}{1}\PY{p}{]}\PY{p}{)}\PY{p}{)}
+\end{Verbatim}
+\end{tcolorbox}
+
+    Note that this function correctly \textbf{handles input/output errors},
+and can be used to \textbf{return a file's content} as a Python
+\textbf{dictionary} even without printing it, by either omitting the
+\texttt{print\_result} argument or setting it to \texttt{False}.
+
+We can thus view the first JSON file and its keys:
+
+    \begin{tcolorbox}[breakable, size=fbox, boxrule=1pt, pad at break*=1mm,colback=cellbackground, colframe=cellborder]
+\prompt{In}{incolor}{4}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+\PY{c+c1}{\PYZsh{} Load sample sequence file}
+\PY{n+nb}{print}\PY{p}{(}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+se}{\PYZbs{}n}\PY{l+s+s1}{\PYZsq{}} \PY{o}{+} \PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{Printing sample OEIS JSON file...}\PY{l+s+s1}{\PYZsq{}}\PY{p}{)}
+
+\PY{n}{file} \PY{o}{=} \PY{n}{load\PYZus{}json}\PY{p}{(}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{data/sequences/A000001.json}\PY{l+s+s1}{\PYZsq{}}\PY{p}{,} \PY{n}{print\PYZus{}result}\PY{o}{=}\PY{k+kc}{True}\PY{p}{)}
+\end{Verbatim}
+\end{tcolorbox}
+
+    \begin{Verbatim}[commandchars=\\\{\}]
+
+Printing sample OEIS JSON file{\ldots}
+File A000001.json contents:
+
+\{
+ "greeting": "Greetings from The On-Line Encyclopedia of Integer Sequences!
+http://oeis.org/",
+ "query": "id:A000001",
+ "count": 1,
+ "start": 0,
+ "results": [
+  \{
+   "number": 1,
+   "id": "M0098 N0035",
+   "data": "0,1,1,1,2,1,2,1,5,2,2,1,5,1,2,1,14,1,5,1,5,2,2,1,15,2,2,5,4,1,4,1,51,1,2,1,14
+,1,2,2,14,1,6,1,4,2,2,1,52,2,5,1,5,1,15,2,13,2,2,1,13,1,2,4,267,1,4,1,5,1,4,1,50,1,2,3,4,
+1,6,1,52,15,2,1,15,1,2,1,12,1,10,1,4,2",
+   "name": "Number of groups of order n.",
+   "comment": [
+    "Also, number of nonisomorphic subgroups of order n in symmetric group S\_n. - \_Lekraj
+Beedassy\_, Dec 16 2004",
+    "Also, number of nonisomorphic primitives of the combinatorial species Lin[n-1]. -
+\_Nicolae Boicu\_, Apr 29 2011",
+    "The record values are (A046058): 1, 2, 5, 14, 15, 51, 52, 267, 2328, 56092,
+10494213, 49487365422, {\ldots}, and they appear at positions (A046059): 1, 4, 8, 16, 24, 32,
+48, 64, 128, 256, 512, 1024, {\ldots} \_Robert G. Wilson v\_, Oct 12 2012",
+    "In (J. H. Conway, Heiko Dietrich and E. A. O'Brien, 2008), a(n) is called the
+\textbackslash{}"group number of n\textbackslash{}", denoted by gnu(n), and the first occurrence of k is called the
+\textbackslash{}"minimal order attaining k\textbackslash{}", denoted by moa(k) (see A046057). - \_Daniel Forgues\_, Feb
+15 2017",
+    "It is conjectured in (J. H. Conway, Heiko Dietrich and E. A. O'Brien, 2008) that the
+sequence n -> a(n) -> a(a(n)) = a\^{}2(n) -> a(a(a(n))) = a\^{}3(n) -> {\ldots} -> consists
+ultimately of 1s, where a(n), denoted by gnu(n), is called the \textbackslash{}"group number of n\textbackslash{}". -
+\_Muniru A Asiru\_, Nov 19 2017",
+    "MacHale (2020) shows that there are infinitely many values of n for which there are
+more groups than rings of that order (cf. A027623). He gives n = 36355 as an example. It
+would be nice to have enough values of n to create an OEIS entry for them. - \_N. J. A.
+Sloane\_, Jan 02 2021"
+   ],
+   "reference": [
+    "S. R. Blackburn, P. M. Neumann, and G. Venkataraman, Enumeration of Finite Groups,
+Cambridge, 2007.",
+    "L. Comtet, Advanced Combinatorics, Reidel, 1974, p. 302, \#35.",
+    "J. H. Conway et al., The Symmetries of Things, Peters, 2008, p. 209.",
+    "H. S. M. Coxeter and W. O. J. Moser, Generators and Relations for Discrete Groups,
+4th ed., Springer-Verlag, NY, reprinted 1984, p. 134.",
+    "CRC Standard Mathematical Tables and Formulae, 30th ed. 1996, p. 150.",
+    "R. L. Graham, D. E. Knuth and O. Patashnik, Concrete Mathematics, A Foundation for
+Computer Science, Addison-Wesley Publ. Co., Reading, MA, 1989, Section 6.6 'Fibonacci
+Numbers' pp. 281-283.",
+    "M. Hall, Jr. and J. K. Senior, The Groups of Order 2\^{}n (n <= 6). Macmillan, NY,
+1964.",
+    "D. Joyner, 'Adventures in Group Theory', Johns Hopkins Press. Pp. 169-172 has table
+of groups of orders < 26.",
+    "D. S. Mitrinovic et al., Handbook of Number Theory, Kluwer, Section XIII.24, p.
+481.",
+    "M. F. Newman and E. A. O'Brien, A CAYLEY library for the groups of order dividing
+128. Group theory (Singapore, 1987), 437-442, de Gruyter, Berlin-New York, 1989.",
+    "N. J. A. Sloane, A Handbook of Integer Sequences, Academic Press, 1973 (includes
+this sequence).",
+    "N. J. A. Sloane and Simon Plouffe, The Encyclopedia of Integer Sequences, Academic
+Press, 1995 (includes this sequence)."
+   ],
+   "link": [
+    "H.-U. Besche and Ivan Panchenko, <a href=\textbackslash{}"/A000001/b000001.txt\textbackslash{}">Table of n, a(n)
+for n = 0..2047</a> [Terms 1 through 2015 copied from Small Groups Library mentioned
+below. Terms 2016 - 2047 added by Ivan Panchenko, Aug 29 2009. 0 prepended by \_Ray
+Chandler\_, Sep 16 2015.]",
+    "H. A. Bender, <a href=\textbackslash{}"http://www.jstor.org/stable/1967981\textbackslash{}">A determination of the
+groups of order p\^{}5</a>, Ann. of Math. (2) 29, pp. 61-72 (1927).",
+    "Hans Ulrich Besche and Bettina Eick, <a
+href=\textbackslash{}"http://dx.doi.org/10.1006/jsco.1998.0258\textbackslash{}">Construction of finite groups</a>,
+Journal of Symbolic Computation, Vol. 27, No. 4, Apr 15 1999, pp. 387-404.",
+    "Hans Ulrich Besche and Bettina Eick, <a
+href=\textbackslash{}"http://dx.doi.org/10.1006/jsco.1998.0259\textbackslash{}">The groups of order at most 1000 except
+512 and 768</a>, Journal of Symbolic Computation, Vol. 27, No. 4, Apr 15 1999, pp.
+405-413.",
+    "H. U. Besche, B. Eick and E. A. O'Brien, <a
+href=\textbackslash{}"http://www.ams.org/era/2001-07-01/S1079-6762-01-00087-7/home.html\textbackslash{}">The groups of
+order at most 2000</a>, Electron. Res. Announc. Amer. Math. Soc. 7 (2001), 1-4.",
+    "H. U. Besche, B. Eick and E. A. O'Brien, <a href=\textbackslash{}"http://www.icm.tu-
+bs.de/ag\_algebra/software/small/\textbackslash{}">The Small Groups Library</a>",
+    "H. U. Besche, B. Eick and E. A. O'Brien, <a href=\textbackslash{}"http://www.icm.tu-
+bs.de/ag\_algebra/software/small/number.html\textbackslash{}">Number of isomorphism types of finite
+groups of given order</a>",
+    "H.-U. Besche, B. Eick and E. A. O'Brien, <a
+href=\textbackslash{}"http://dx.doi.org/10.1142/S0218196702001115\textbackslash{}">A Millennium Project: Constructing
+Small Groups</a>, Internat. J. Algebra and Computation, 12 (2002), 623-644.",
+    "H. Bottomley, <a href=\textbackslash{}"/A000001/a000001.gif\textbackslash{}">Illustration of initial terms</a>",
+    "J. H. Conway, Heiko Dietrich and E. A. O'Brien, <a
+href=\textbackslash{}"http://www.math.auckland.ac.nz/\textasciitilde{}obrien/research/gnu.pdf\textbackslash{}">Counting groups: gnus,
+moas and other exotica</a>, Math. Intell., Vol. 30, No. 2, Spring 2008.",
+    "Yang-Hui He and Minhyong Kim, <a href=\textbackslash{}"https://arxiv.org/abs/1905.02263\textbackslash{}">Learning
+Algebraic Structures: Preliminary Investigations</a>, arXiv:1905.02263 [cs.LG], 2019.",
+    "Otto H\textbackslash{}u00f6lder, <a href=\textbackslash{}"http://dx.doi.org/10.1007/BF01443651\textbackslash{}">Die Gruppen der
+Ordnungen p\^{}3, pq\^{}2, pqr, p\^{}4</a>, Math. Ann. 43 pp. 301-412 (1893).",
+    "Rodney James, <a href=\textbackslash{}"http://dx.doi.org/10.1090/S0025-5718-1980-0559207-0\textbackslash{}">The
+groups of order p\^{}6 (p an odd prime)</a>, Math. Comp. 34 (1980), 613-637.",
+    "Rodney James and John Cannon, <a
+href=\textbackslash{}"http://dx.doi.org/10.1090/S0025-5718-1969-0238953-8\textbackslash{}">Computation of isomorphism
+classes of p-groups</a>, Mathematics of Computation 23.105 (1969): 135-140.",
+    "Desmond MacHale, <a href=\textbackslash{}"https://doi.org/10.1080/00029890.2020.1820790\textbackslash{}">Are There
+More Finite Rings than Finite Groups?</a>, Amer. Math. Monthly (2020) Vol. 127, Issue 10,
+936-938.",
+    "G. A. Miller, <a href=\textbackslash{}"http://www.jstor.org/stable/2370630\textbackslash{}">Determination of all
+the groups of order 64</a>, Amer. J. Math., 52 (1930), 617-634.",
+    "Ed Pegg, Jr., <a href=\textbackslash{}"http://www.mathpuzzle.com/MAA/07-Sequence\%20Pictures/mathgam
+es\_12\_08\_03.html\textbackslash{}">Sequence Pictures</a>, Math Games column, Dec 08 2003.",
+    "Ed Pegg, Jr., <a href=\textbackslash{}"/A000043/a000043\_2.pdf\textbackslash{}">Sequence Pictures</a>, Math Games
+column, Dec 08 2003 [Cached copy, with permission (pdf only)]",
+    "D. S. Rajan, <a href=\textbackslash{}"http://dx.doi.org/10.1016/0012-365X(93)90061-W\textbackslash{}">The
+equations D\^{}kY=X\^{}n in combinatorial species</a>, Discrete Mathematics 118 (1993) 197-206
+North-Holland.",
+    "E. Rodemich, <a href=\textbackslash{}"http://dx.doi.org/10.1016/0021-8693(90)90244-I\textbackslash{}">The groups
+of order 128</a>, J. Algebra 67 (1980), no. 1, 129-142.",
+    "Gordon Royle, <a
+href=\textbackslash{}"http://staffhome.ecm.uwa.edu.au/\textasciitilde{}00013890/data.html\textbackslash{}">Combinatorial
+Catalogues</a>. See subpage \textbackslash{}"Generators of small groups\textbackslash{}" for explicit generators for
+most groups of even order < 1000.",
+    "D. Rusin, <a href=\textbackslash{}"/A000001/a000001.txt\textbackslash{}">Asymptotics</a> [Cached copy of lost web
+page]",
+    "Eric Weisstein's World of Mathematics, <a
+href=\textbackslash{}"http://mathworld.wolfram.com/FiniteGroup.html\textbackslash{}">Finite Group</a>",
+    "Wikipedia, <a href=\textbackslash{}"http://en.wikipedia.org/wiki/Finite\_group\textbackslash{}">Finite group</a>",
+    "M. Wild, <a href=\textbackslash{}"http://www.jstor.org/stable/30037381\textbackslash{}">The groups of order
+sixteen made easy</a>, Amer. Math. Monthly, 112 (No. 1, 2005), 20-31.",
+    "Gang Xiao, <a href=\textbackslash{}"http://wims.unice.fr/\textasciitilde{}wims/wims.cgi?module=tool/algebra/smallgr
+oup\textbackslash{}">SmallGroup</a>",
+    "<a href=\textbackslash{}"/index/Gre\#groups\textbackslash{}">Index entries for sequences related to groups</a>",
+    "<a href=\textbackslash{}"/index/Cor\#core\textbackslash{}">Index entries for \textbackslash{}"core\textbackslash{}" sequences</a>"
+   ],
+   "formula": [
+    "From \_Mitch Harris\_, Oct 25 2006: (Start)",
+    "For p, q, r primes:",
+    "a(p) = 1, a(p\^{}2) = 2, a(p\^{}3) = 5, a(p\^{}4) = 14, if p = 2, otherwise 15.",
+    "a(p\^{}5) = 61 + 2*p + 2*gcd(p-1,3) + gcd(p-1,4), p >= 5, a(2\^{}5)=51, a(3\^{}5)=67.",
+    "a(p\^{}e) \textasciitilde{} p\^{}((2/27)e\^{}3 + O(e\^{}(8/3)))",
+    "a(pq) = 1 if gcd(p,q-1) = 1, 2 if gcd(p,q-1) = p. (p < q)",
+    "a(pq\^{}2) = one of the following:",
+    "* 5, p=2, q odd,",
+    "* (p+9)/2, q=1 mod p, p odd,",
+    "* 5, p=3, q=2,",
+    "* 3, q = -1 mod p, p and q odd.",
+    "* 4, p=1 mod q, p > 3, p != 1 mod q\^{}2",
+    "* 5, p=1 mod q\^{}2",
+    "* 2, q != +/-1 mod p and p != 1 mod q,",
+    "a(pqr) (p < q < r) = one of the following:",
+    "* q==1 mod p r==1 mod p r==1 mod q a(pqr)",
+    "* No{\ldots}No{\ldots}No{\ldots}1",
+    "* No{\ldots}No{\ldots}Yes{\ldots}2",
+    "* No{\ldots}Yes{\ldots}No{\ldots}2",
+    "* No{\ldots}Yes{\ldots}Yes{\ldots}4",
+    "* Yes{\ldots}No{\ldots}No{\ldots}2",
+    "* Yes{\ldots}No{\ldots}Yes{\ldots}3",
+    "* Yes{\ldots}Yes{\ldots}No{\ldots}p+2",
+    "* Yes{\ldots}Yes{\ldots}Yes{\ldots}p+4 (table from Derek Holt) (End)",
+    "a(n) = A000688(n) + A060689(n). - \_R. J. Mathar\_, Mar 14 2015"
+   ],
+   "example": [
+    "Groups of orders 1 through 10 (C\_n = cyclic, D\_n = dihedral of order n, Q\_8 =
+quaternion, S\_n = symmetric):",
+    "1: C\_1",
+    "2: C\_2",
+    "3: C\_3",
+    "4: C\_4, C\_2 X C\_2",
+    "5: C\_5",
+    "6: C\_6, S\_3=D\_6",
+    "7: C\_7",
+    "8: C\_8, C\_4 X C\_2, C\_2 X C\_2 X C\_2, D\_8, Q\_8",
+    "9: C\_9, C\_3 X C\_3",
+    "10: C\_10, D\_10"
+   ],
+   "maple": [
+    "GroupTheory:-NumGroups(n); \# with(GroupTheory); loads this command - \_N. J. A.
+Sloane\_, Dec 28 2017"
+   ],
+   "mathematica": [
+    "FiniteGroupCount[Range[100]] (* \_Harvey P. Dale\_, Jan 29 2013 *)",
+    "a[ n\_] := If[ n < 1, 0, FiniteGroupCount @ n]; (* \_Michael Somos\_, May 28 2014 *)"
+   ],
+   "program": [
+    "(MAGMA) D:=SmallGroupDatabase(); [ NumberOfSmallGroups(D, n) : n in [1..1000] ]; //
+\_John Cannon\_, Dec 23 2006",
+    "(GAP) A000001 := Concatenation([0], List([1..500], n -> NumberSmallGroups(n))); \#
+\_Muniru A Asiru\_, Oct 15 2017"
+   ],
+   "xref": [
+    "The main sequences concerned with group theory are A000001 (this one), A000679,
+A001034, A001228, A005180, A000019, A000637, A000638, A002106, A005432, A000688, A060689,
+A051532.",
+    "Cf. A046058, A023675, A023676. A003277 gives n for which A000001(n) = 1, A063756
+(partial sums).",
+    "A046057 gives first occurrence of each k.",
+    "A027623 gives the number of rings of order n."
+   ],
+   "keyword": "nonn,core,nice,hard",
+   "offset": "0,5",
+   "author": "\_N. J. A. Sloane\_",
+   "ext": [
+    "More terms from \_Michael Somos\_",
+    "Typo in b-file description fixed by \_David Applegate\_, Sep 05 2009"
+   ],
+   "references": 156,
+   "revision": 191,
+   "time": "2021-03-27T03:48:47-04:00",
+   "created": "1991-04-30T03:00:00-04:00"
+  \}
+ ]
+\}
+
+The 'json' Python module returns a dictionary, which can be confirmed by invoking the
+'type' function on the loaded data: <class 'dict'>.
+This dictionary's keys are: 'greeting', 'query', 'count', 'start', 'results'.
+    \end{Verbatim}
+
+    As mentioned before, each sequence file contains additional information,
+specifically:
+
+\begin{itemize}
+    \item a simple \texttt{greeting}; \item a \texttt{query},
+containing the sequence's ID; \item \texttt{count}; \item \texttt{start}; \item \texttt{results}, which contains a list with another dictionary as its
+first element.
+\end{itemize}
+
+It can be seen from this file's content that the most relevant
+information is actually found in the \textbf{\texttt{results}
+sub-dictionary}, which can be easily accessed with:
+
+    \begin{tcolorbox}[breakable, size=fbox, boxrule=1pt, pad at break*=1mm,colback=cellbackground, colframe=cellborder]
+\prompt{In}{incolor}{5}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+\PY{c+c1}{\PYZsh{} Print \PYZsq{}results\PYZsq{} section of the sample sequence}
+\PY{n+nb}{print}\PY{p}{(}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+se}{\PYZbs{}n}\PY{l+s+s1}{\PYZsq{}} \PY{o}{+} \PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{Printing sample file }\PY{l+s+s1}{\PYZdq{}}\PY{l+s+s1}{results}\PY{l+s+s1}{\PYZdq{}}\PY{l+s+s1}{ section...}\PY{l+s+s1}{\PYZsq{}} \PY{o}{+} \PY{l+s+s1}{\PYZsq{}}\PY{l+s+se}{\PYZbs{}n}\PY{l+s+s1}{\PYZsq{}}\PY{p}{)}
+
+\PY{n}{results} \PY{o}{=} \PY{n}{file}\PY{o}{.}\PY{n}{get}\PY{p}{(}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{results}\PY{l+s+s1}{\PYZsq{}}\PY{p}{)}
+\PY{k}{if} \PY{n}{results}\PY{p}{:}
+    \PY{n+nb}{print}\PY{p}{(}\PY{n}{json}\PY{o}{.}\PY{n}{dumps}\PY{p}{(}\PY{n}{results}\PY{p}{[}\PY{l+m+mi}{0}\PY{p}{]}\PY{p}{,} \PY{n}{indent}\PY{o}{=}\PY{k+kc}{True}\PY{p}{)}\PY{p}{)}
+\PY{k}{else}\PY{p}{:}
+    \PY{n+nb}{print}\PY{p}{(}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{No }\PY{l+s+s1}{\PYZdq{}}\PY{l+s+s1}{results}\PY{l+s+s1}{\PYZdq{}}\PY{l+s+s1}{ section found.}\PY{l+s+s1}{\PYZsq{}}\PY{p}{)}
+\end{Verbatim}
+\end{tcolorbox}
+
+    \begin{Verbatim}[commandchars=\\\{\}]
+
+Printing sample file "results" section{\ldots}
+
+\{
+ "number": 1,
+ "id": "M0098 N0035",
+ "data": "0,1,1,1,2,1,2,1,5,2,2,1,5,1,2,1,14,1,5,1,5,2,2,1,15,2,2,5,4,1,4,1,51,1,2,1,14,1
+,2,2,14,1,6,1,4,2,2,1,52,2,5,1,5,1,15,2,13,2,2,1,13,1,2,4,267,1,4,1,5,1,4,1,50,1,2,3,4,1,
+6,1,52,15,2,1,15,1,2,1,12,1,10,1,4,2",
+ "name": "Number of groups of order n.",
+ "comment": [
+  "Also, number of nonisomorphic subgroups of order n in symmetric group S\_n. - \_Lekraj
+Beedassy\_, Dec 16 2004",
+  "Also, number of nonisomorphic primitives of the combinatorial species Lin[n-1]. -
+\_Nicolae Boicu\_, Apr 29 2011",
+  "The record values are (A046058): 1, 2, 5, 14, 15, 51, 52, 267, 2328, 56092, 10494213,
+49487365422, {\ldots}, and they appear at positions (A046059): 1, 4, 8, 16, 24, 32, 48, 64,
+128, 256, 512, 1024, {\ldots} \_Robert G. Wilson v\_, Oct 12 2012",
+  "In (J. H. Conway, Heiko Dietrich and E. A. O'Brien, 2008), a(n) is called the \textbackslash{}"group
+number of n\textbackslash{}", denoted by gnu(n), and the first occurrence of k is called the \textbackslash{}"minimal
+order attaining k\textbackslash{}", denoted by moa(k) (see A046057). - \_Daniel Forgues\_, Feb 15 2017",
+  "It is conjectured in (J. H. Conway, Heiko Dietrich and E. A. O'Brien, 2008) that the
+sequence n -> a(n) -> a(a(n)) = a\^{}2(n) -> a(a(a(n))) = a\^{}3(n) -> {\ldots} -> consists
+ultimately of 1s, where a(n), denoted by gnu(n), is called the \textbackslash{}"group number of n\textbackslash{}". -
+\_Muniru A Asiru\_, Nov 19 2017",
+  "MacHale (2020) shows that there are infinitely many values of n for which there are
+more groups than rings of that order (cf. A027623). He gives n = 36355 as an example. It
+would be nice to have enough values of n to create an OEIS entry for them. - \_N. J. A.
+Sloane\_, Jan 02 2021"
+ ],
+ "reference": [
+  "S. R. Blackburn, P. M. Neumann, and G. Venkataraman, Enumeration of Finite Groups,
+Cambridge, 2007.",
+  "L. Comtet, Advanced Combinatorics, Reidel, 1974, p. 302, \#35.",
+  "J. H. Conway et al., The Symmetries of Things, Peters, 2008, p. 209.",
+  "H. S. M. Coxeter and W. O. J. Moser, Generators and Relations for Discrete Groups, 4th
+ed., Springer-Verlag, NY, reprinted 1984, p. 134.",
+  "CRC Standard Mathematical Tables and Formulae, 30th ed. 1996, p. 150.",
+  "R. L. Graham, D. E. Knuth and O. Patashnik, Concrete Mathematics, A Foundation for
+Computer Science, Addison-Wesley Publ. Co., Reading, MA, 1989, Section 6.6 'Fibonacci
+Numbers' pp. 281-283.",
+  "M. Hall, Jr. and J. K. Senior, The Groups of Order 2\^{}n (n <= 6). Macmillan, NY,
+1964.",
+  "D. Joyner, 'Adventures in Group Theory', Johns Hopkins Press. Pp. 169-172 has table of
+groups of orders < 26.",
+  "D. S. Mitrinovic et al., Handbook of Number Theory, Kluwer, Section XIII.24, p. 481.",
+  "M. F. Newman and E. A. O'Brien, A CAYLEY library for the groups of order dividing 128.
+Group theory (Singapore, 1987), 437-442, de Gruyter, Berlin-New York, 1989.",
+  "N. J. A. Sloane, A Handbook of Integer Sequences, Academic Press, 1973 (includes this
+sequence).",
+  "N. J. A. Sloane and Simon Plouffe, The Encyclopedia of Integer Sequences, Academic
+Press, 1995 (includes this sequence)."
+ ],
+ "link": [
+  "H.-U. Besche and Ivan Panchenko, <a href=\textbackslash{}"/A000001/b000001.txt\textbackslash{}">Table of n, a(n) for
+n = 0..2047</a> [Terms 1 through 2015 copied from Small Groups Library mentioned below.
+Terms 2016 - 2047 added by Ivan Panchenko, Aug 29 2009. 0 prepended by \_Ray Chandler\_,
+Sep 16 2015.]",
+  "H. A. Bender, <a href=\textbackslash{}"http://www.jstor.org/stable/1967981\textbackslash{}">A determination of the
+groups of order p\^{}5</a>, Ann. of Math. (2) 29, pp. 61-72 (1927).",
+  "Hans Ulrich Besche and Bettina Eick, <a
+href=\textbackslash{}"http://dx.doi.org/10.1006/jsco.1998.0258\textbackslash{}">Construction of finite groups</a>,
+Journal of Symbolic Computation, Vol. 27, No. 4, Apr 15 1999, pp. 387-404.",
+  "Hans Ulrich Besche and Bettina Eick, <a
+href=\textbackslash{}"http://dx.doi.org/10.1006/jsco.1998.0259\textbackslash{}">The groups of order at most 1000 except
+512 and 768</a>, Journal of Symbolic Computation, Vol. 27, No. 4, Apr 15 1999, pp.
+405-413.",
+  "H. U. Besche, B. Eick and E. A. O'Brien, <a
+href=\textbackslash{}"http://www.ams.org/era/2001-07-01/S1079-6762-01-00087-7/home.html\textbackslash{}">The groups of
+order at most 2000</a>, Electron. Res. Announc. Amer. Math. Soc. 7 (2001), 1-4.",
+  "H. U. Besche, B. Eick and E. A. O'Brien, <a href=\textbackslash{}"http://www.icm.tu-
+bs.de/ag\_algebra/software/small/\textbackslash{}">The Small Groups Library</a>",
+  "H. U. Besche, B. Eick and E. A. O'Brien, <a href=\textbackslash{}"http://www.icm.tu-
+bs.de/ag\_algebra/software/small/number.html\textbackslash{}">Number of isomorphism types of finite
+groups of given order</a>",
+  "H.-U. Besche, B. Eick and E. A. O'Brien, <a
+href=\textbackslash{}"http://dx.doi.org/10.1142/S0218196702001115\textbackslash{}">A Millennium Project: Constructing
+Small Groups</a>, Internat. J. Algebra and Computation, 12 (2002), 623-644.",
+  "H. Bottomley, <a href=\textbackslash{}"/A000001/a000001.gif\textbackslash{}">Illustration of initial terms</a>",
+  "J. H. Conway, Heiko Dietrich and E. A. O'Brien, <a
+href=\textbackslash{}"http://www.math.auckland.ac.nz/\textasciitilde{}obrien/research/gnu.pdf\textbackslash{}">Counting groups: gnus,
+moas and other exotica</a>, Math. Intell., Vol. 30, No. 2, Spring 2008.",
+  "Yang-Hui He and Minhyong Kim, <a href=\textbackslash{}"https://arxiv.org/abs/1905.02263\textbackslash{}">Learning
+Algebraic Structures: Preliminary Investigations</a>, arXiv:1905.02263 [cs.LG], 2019.",
+  "Otto H\textbackslash{}u00f6lder, <a href=\textbackslash{}"http://dx.doi.org/10.1007/BF01443651\textbackslash{}">Die Gruppen der
+Ordnungen p\^{}3, pq\^{}2, pqr, p\^{}4</a>, Math. Ann. 43 pp. 301-412 (1893).",
+  "Rodney James, <a href=\textbackslash{}"http://dx.doi.org/10.1090/S0025-5718-1980-0559207-0\textbackslash{}">The
+groups of order p\^{}6 (p an odd prime)</a>, Math. Comp. 34 (1980), 613-637.",
+  "Rodney James and John Cannon, <a
+href=\textbackslash{}"http://dx.doi.org/10.1090/S0025-5718-1969-0238953-8\textbackslash{}">Computation of isomorphism
+classes of p-groups</a>, Mathematics of Computation 23.105 (1969): 135-140.",
+  "Desmond MacHale, <a href=\textbackslash{}"https://doi.org/10.1080/00029890.2020.1820790\textbackslash{}">Are There
+More Finite Rings than Finite Groups?</a>, Amer. Math. Monthly (2020) Vol. 127, Issue 10,
+936-938.",
+  "G. A. Miller, <a href=\textbackslash{}"http://www.jstor.org/stable/2370630\textbackslash{}">Determination of all the
+groups of order 64</a>, Amer. J. Math., 52 (1930), 617-634.",
+  "Ed Pegg, Jr., <a href=\textbackslash{}"http://www.mathpuzzle.com/MAA/07-Sequence\%20Pictures/mathgames
+\_12\_08\_03.html\textbackslash{}">Sequence Pictures</a>, Math Games column, Dec 08 2003.",
+  "Ed Pegg, Jr., <a href=\textbackslash{}"/A000043/a000043\_2.pdf\textbackslash{}">Sequence Pictures</a>, Math Games
+column, Dec 08 2003 [Cached copy, with permission (pdf only)]",
+  "D. S. Rajan, <a href=\textbackslash{}"http://dx.doi.org/10.1016/0012-365X(93)90061-W\textbackslash{}">The equations
+D\^{}kY=X\^{}n in combinatorial species</a>, Discrete Mathematics 118 (1993) 197-206 North-
+Holland.",
+  "E. Rodemich, <a href=\textbackslash{}"http://dx.doi.org/10.1016/0021-8693(90)90244-I\textbackslash{}">The groups of
+order 128</a>, J. Algebra 67 (1980), no. 1, 129-142.",
+  "Gordon Royle, <a
+href=\textbackslash{}"http://staffhome.ecm.uwa.edu.au/\textasciitilde{}00013890/data.html\textbackslash{}">Combinatorial
+Catalogues</a>. See subpage \textbackslash{}"Generators of small groups\textbackslash{}" for explicit generators for
+most groups of even order < 1000.",
+  "D. Rusin, <a href=\textbackslash{}"/A000001/a000001.txt\textbackslash{}">Asymptotics</a> [Cached copy of lost web
+page]",
+  "Eric Weisstein's World of Mathematics, <a
+href=\textbackslash{}"http://mathworld.wolfram.com/FiniteGroup.html\textbackslash{}">Finite Group</a>",
+  "Wikipedia, <a href=\textbackslash{}"http://en.wikipedia.org/wiki/Finite\_group\textbackslash{}">Finite group</a>",
+  "M. Wild, <a href=\textbackslash{}"http://www.jstor.org/stable/30037381\textbackslash{}">The groups of order sixteen
+made easy</a>, Amer. Math. Monthly, 112 (No. 1, 2005), 20-31.",
+  "Gang Xiao, <a href=\textbackslash{}"http://wims.unice.fr/\textasciitilde{}wims/wims.cgi?module=tool/algebra/smallgrou
+p\textbackslash{}">SmallGroup</a>",
+  "<a href=\textbackslash{}"/index/Gre\#groups\textbackslash{}">Index entries for sequences related to groups</a>",
+  "<a href=\textbackslash{}"/index/Cor\#core\textbackslash{}">Index entries for \textbackslash{}"core\textbackslash{}" sequences</a>"
+ ],
+ "formula": [
+  "From \_Mitch Harris\_, Oct 25 2006: (Start)",
+  "For p, q, r primes:",
+  "a(p) = 1, a(p\^{}2) = 2, a(p\^{}3) = 5, a(p\^{}4) = 14, if p = 2, otherwise 15.",
+  "a(p\^{}5) = 61 + 2*p + 2*gcd(p-1,3) + gcd(p-1,4), p >= 5, a(2\^{}5)=51, a(3\^{}5)=67.",
+  "a(p\^{}e) \textasciitilde{} p\^{}((2/27)e\^{}3 + O(e\^{}(8/3)))",
+  "a(pq) = 1 if gcd(p,q-1) = 1, 2 if gcd(p,q-1) = p. (p < q)",
+  "a(pq\^{}2) = one of the following:",
+  "* 5, p=2, q odd,",
+  "* (p+9)/2, q=1 mod p, p odd,",
+  "* 5, p=3, q=2,",
+  "* 3, q = -1 mod p, p and q odd.",
+  "* 4, p=1 mod q, p > 3, p != 1 mod q\^{}2",
+  "* 5, p=1 mod q\^{}2",
+  "* 2, q != +/-1 mod p and p != 1 mod q,",
+  "a(pqr) (p < q < r) = one of the following:",
+  "* q==1 mod p r==1 mod p r==1 mod q a(pqr)",
+  "* No{\ldots}No{\ldots}No{\ldots}1",
+  "* No{\ldots}No{\ldots}Yes{\ldots}2",
+  "* No{\ldots}Yes{\ldots}No{\ldots}2",
+  "* No{\ldots}Yes{\ldots}Yes{\ldots}4",
+  "* Yes{\ldots}No{\ldots}No{\ldots}2",
+  "* Yes{\ldots}No{\ldots}Yes{\ldots}3",
+  "* Yes{\ldots}Yes{\ldots}No{\ldots}p+2",
+  "* Yes{\ldots}Yes{\ldots}Yes{\ldots}p+4 (table from Derek Holt) (End)",
+  "a(n) = A000688(n) + A060689(n). - \_R. J. Mathar\_, Mar 14 2015"
+ ],
+ "example": [
+  "Groups of orders 1 through 10 (C\_n = cyclic, D\_n = dihedral of order n, Q\_8 =
+quaternion, S\_n = symmetric):",
+  "1: C\_1",
+  "2: C\_2",
+  "3: C\_3",
+  "4: C\_4, C\_2 X C\_2",
+  "5: C\_5",
+  "6: C\_6, S\_3=D\_6",
+  "7: C\_7",
+  "8: C\_8, C\_4 X C\_2, C\_2 X C\_2 X C\_2, D\_8, Q\_8",
+  "9: C\_9, C\_3 X C\_3",
+  "10: C\_10, D\_10"
+ ],
+ "maple": [
+  "GroupTheory:-NumGroups(n); \# with(GroupTheory); loads this command - \_N. J. A.
+Sloane\_, Dec 28 2017"
+ ],
+ "mathematica": [
+  "FiniteGroupCount[Range[100]] (* \_Harvey P. Dale\_, Jan 29 2013 *)",
+  "a[ n\_] := If[ n < 1, 0, FiniteGroupCount @ n]; (* \_Michael Somos\_, May 28 2014 *)"
+ ],
+ "program": [
+  "(MAGMA) D:=SmallGroupDatabase(); [ NumberOfSmallGroups(D, n) : n in [1..1000] ]; //
+\_John Cannon\_, Dec 23 2006",
+  "(GAP) A000001 := Concatenation([0], List([1..500], n -> NumberSmallGroups(n))); \#
+\_Muniru A Asiru\_, Oct 15 2017"
+ ],
+ "xref": [
+  "The main sequences concerned with group theory are A000001 (this one), A000679,
+A001034, A001228, A005180, A000019, A000637, A000638, A002106, A005432, A000688, A060689,
+A051532.",
+  "Cf. A046058, A023675, A023676. A003277 gives n for which A000001(n) = 1, A063756
+(partial sums).",
+  "A046057 gives first occurrence of each k.",
+  "A027623 gives the number of rings of order n."
+ ],
+ "keyword": "nonn,core,nice,hard",
+ "offset": "0,5",
+ "author": "\_N. J. A. Sloane\_",
+ "ext": [
+  "More terms from \_Michael Somos\_",
+  "Typo in b-file description fixed by \_David Applegate\_, Sep 05 2009"
+ ],
+ "references": 156,
+ "revision": 191,
+ "time": "2021-03-27T03:48:47-04:00",
+ "created": "1991-04-30T03:00:00-04:00"
+\}
+    \end{Verbatim}
+
+    Again, there are many different keys, among which we can find the one
+which is relevant to this project: the \texttt{comment} key containing a
+list of \textbf{comments} with their \textbf{authors}:
+
+    \begin{tcolorbox}[breakable, size=fbox, boxrule=1pt, pad at break*=1mm,colback=cellbackground, colframe=cellborder]
+\prompt{In}{incolor}{6}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+\PY{c+c1}{\PYZsh{} Print \PYZsq{}comment\PYZsq{} subsection of the sample sequence}
+\PY{n+nb}{print}\PY{p}{(}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+se}{\PYZbs{}n}\PY{l+s+s1}{\PYZsq{}} \PY{o}{+} \PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{Printing sample file }\PY{l+s+s1}{\PYZdq{}}\PY{l+s+s1}{comment}\PY{l+s+s1}{\PYZdq{}}\PY{l+s+s1}{ subsection...}\PY{l+s+s1}{\PYZsq{}} \PY{o}{+} \PY{l+s+s1}{\PYZsq{}}\PY{l+s+se}{\PYZbs{}n}\PY{l+s+s1}{\PYZsq{}}\PY{p}{)}
+
+\PY{n}{comment\PYZus{}list} \PY{o}{=} \PY{n}{results}\PY{p}{[}\PY{l+m+mi}{0}\PY{p}{]}\PY{o}{.}\PY{n}{get}\PY{p}{(}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{comment}\PY{l+s+s1}{\PYZsq{}}\PY{p}{)}
+\PY{k}{if} \PY{n}{comment\PYZus{}list}\PY{p}{:}
+    \PY{n+nb}{print}\PY{p}{(}\PY{n}{json}\PY{o}{.}\PY{n}{dumps}\PY{p}{(}\PY{n}{comment\PYZus{}list}\PY{p}{,} \PY{n}{indent}\PY{o}{=}\PY{k+kc}{True}\PY{p}{)}\PY{p}{)}
+\PY{k}{else}\PY{p}{:}
+    \PY{n+nb}{print}\PY{p}{(}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{No }\PY{l+s+s1}{\PYZdq{}}\PY{l+s+s1}{comments}\PY{l+s+s1}{\PYZdq{}}\PY{l+s+s1}{ subsection found.}\PY{l+s+s1}{\PYZsq{}} \PY{o}{+} \PY{l+s+s1}{\PYZsq{}}\PY{l+s+se}{\PYZbs{}n}\PY{l+s+s1}{\PYZsq{}}\PY{p}{)}
+\end{Verbatim}
+\end{tcolorbox}
+
+    \begin{Verbatim}[commandchars=\\\{\}]
+
+Printing sample file "comment" subsection{\ldots}
+
+[
+ "Also, number of nonisomorphic subgroups of order n in symmetric group S\_n. - \_Lekraj
+Beedassy\_, Dec 16 2004",
+ "Also, number of nonisomorphic primitives of the combinatorial species Lin[n-1]. -
+\_Nicolae Boicu\_, Apr 29 2011",
+ "The record values are (A046058): 1, 2, 5, 14, 15, 51, 52, 267, 2328, 56092, 10494213,
+49487365422, {\ldots}, and they appear at positions (A046059): 1, 4, 8, 16, 24, 32, 48, 64,
+128, 256, 512, 1024, {\ldots} \_Robert G. Wilson v\_, Oct 12 2012",
+ "In (J. H. Conway, Heiko Dietrich and E. A. O'Brien, 2008), a(n) is called the \textbackslash{}"group
+number of n\textbackslash{}", denoted by gnu(n), and the first occurrence of k is called the \textbackslash{}"minimal
+order attaining k\textbackslash{}", denoted by moa(k) (see A046057). - \_Daniel Forgues\_, Feb 15 2017",
+ "It is conjectured in (J. H. Conway, Heiko Dietrich and E. A. O'Brien, 2008) that the
+sequence n -> a(n) -> a(a(n)) = a\^{}2(n) -> a(a(a(n))) = a\^{}3(n) -> {\ldots} -> consists
+ultimately of 1s, where a(n), denoted by gnu(n), is called the \textbackslash{}"group number of n\textbackslash{}". -
+\_Muniru A Asiru\_, Nov 19 2017",
+ "MacHale (2020) shows that there are infinitely many values of n for which there are
+more groups than rings of that order (cf. A027623). He gives n = 36355 as an example. It
+would be nice to have enough values of n to create an OEIS entry for them. - \_N. J. A.
+Sloane\_, Jan 02 2021"
+]
+    \end{Verbatim}
+
+\section{Author parsing}\label{author-parsing}
+
+Now that we know where to find the authors' names, we can proceed with
+building a function to parse all of them from a given file.
+
+\hypertarget{regular-expressions}{%
+\subsection{Regular expressions}\label{regular-expressions}}
+
+The most efficient way of doing this is to use a \textbf{regular
+expression} (also known as \emph{regex}), a set of characters specifying
+a \emph{search pattern}.
+
+We must first identify the ways in which the names have been written; by
+analyzing some comments, \textbf{six main patterns} have been
+identified, along with the \textbf{four regular expressions} needed to
+match them:
+
+\begin{enumerate}
+
+\item \emph{``\_Name Surname\_''}
+\texttt{(?\textless{}=\_){[}A-Z{]}(?!={[}A-Z{]}){[}\^{}0-9+\textbackslash{}(\textbackslash{})\textbackslash{}{[}\textbackslash{}{]}\textbackslash{}\{\textbackslash{}\}\textbackslash{}\textbackslash{}\textbackslash{}/\_:;""{]}\{2,\}?(?=\_)}
+\item \emph{``{[}Name Surname{]}''} and \emph{``{[}Surnamea, Surnameb{]}''}
+\texttt{(?\textless{}=\textbackslash{}{[}){[}A-Z{]}(?!={[}A-Z{]}){[}\^{}0-9+\textbackslash{}(\textbackslash{})\textbackslash{}{[}\textbackslash{}{]}\textbackslash{}\{\textbackslash{}\}\textbackslash{}\textbackslash{}\textbackslash{}/\_ \\ :;""{]}\{2,\}?(?=\textbackslash{}{]})}
+\item \emph{``- Name, Surname (''} and \emph{``- Name Surname,''}
+\texttt{(?\textless{}=-\ ){[}A-Z{]}(?!={[}A-Z{]}){[}\^{}0-9+\textbackslash{}(\textbackslash{})\textbackslash{}{[}\textbackslash{}{]}\textbackslash{}\{\textbackslash{}\}\textbackslash{}\textbackslash{}\textbackslash{}/\_ \\ :;""{]}\{2,\}?(?=\ \textbackslash{}(\textbar{},\ )}
+\item \emph{``(Name Surname,''}
+\texttt{(?\textless{}=\textbackslash{}(){[}A-Z{]}(?!={[}A-Z{]}){[}\^{}0-9+\textbackslash{}(\textbackslash{})\textbackslash{}{[}\textbackslash{}{]}\textbackslash{}\{\textbackslash{}\}\textbackslash{}\textbackslash{}\textbackslash{}/\_:;""{]}\{2,\}?(?=,)}
+
+\end{enumerate}
+
+In spite of their apparent complexity, the meaning of these patterns is
+quite simple and be easily debugged with tools like
+\href{https://regex101.com/}{Regex101}. Each of them matches only
+strings that:
+
+\begin{itemize}
+
+\item begin with certain characters \texttt{\_}, \texttt{{[}},
+\texttt{-}, \texttt{(}, 
+
+\begin{itemize}
+\item followed by a capital letter \texttt{{[}A-Z{]}},
+\begin{itemize}
+\item not followed by another capital letter \texttt{(?!={[}A-Z{]})}, 
+\end{itemize}
+\end{itemize}
+
+\begin{itemize}
+\item followed by at least any two characters \texttt{\{2,\}?},
+\begin{itemize}
+\item at the condition that none of them belong to a list
+of forbidden symbols
+\texttt{{[}\^{}0-9+\textbackslash{}(\textbackslash{})\textbackslash{}{[}\textbackslash{}{]}\textbackslash{}\{\textbackslash{}\}\textbackslash{}\textbackslash{}\textbackslash{}/\_:;""{]}}
+(where \texttt{\^{}} is as a negation operator),
+\end{itemize}
+\end{itemize}
+
+\item end with certain
+characters \texttt{\_}, \texttt{{]}}, \texttt{(} or \texttt{,},
+\texttt{,}.
+
+\end{itemize}
+
+\texttt{(?\textgreater{}=)} and \texttt{(?=)} indicate that the matched
+strings should be preceded or followed (respectively) by the
+character(s) to the right of the \texttt{=} symbol.
+
+Escaping certain characters distinguishes them from a regex special
+symbol (e.g.~\texttt{\textbackslash{}(\textbackslash{})} matches the
+string \emph{()}, while \texttt{()} is an empty regex group);
+whitespaces are simply represented by, well, a whitespace (\texttt{}).
+
+By combining these four expressions with the OR character
+(\texttt{\textbar{}}) we can create the following regular expression to
+match all patterns at once in Python:
+
+\texttt{(?\textless{}=\_){[}A-Z{]}(?!={[}A-Z{]}){[}\^{}0-9+\textbackslash{}(\textbackslash{})\textbackslash{}{[}\textbackslash{}{]}\textbackslash{}\{\textbackslash{}\}\textbackslash{}\textbackslash{}\textbackslash{}/\_:;""{]}\{2,\}?(?=\_)\textbar{}(?\textless{}=\textbackslash{}{[}){[}A-Z{]}(?!={[}A-Z{]}) \\ {[}\^{}0-9+\textbackslash{}(\textbackslash{})\textbackslash{}{[}\textbackslash{}{]}\textbackslash{}\{\textbackslash{}\}\textbackslash{}\textbackslash{}\textbackslash{}/\_:;""{]}\{2,\}?(?=\textbackslash{}{]})\textbar{}(?\textless{}=-\ ){[}A-Z{]}(?!={[}A-Z{]}){[}\^{}0-9+\textbackslash{}(\textbackslash{})\textbackslash{}{[}\textbackslash{}{]}\textbackslash{}\{\textbackslash{}\}\textbackslash{}\textbackslash{}\textbackslash{}/\_ \\ :;""{]}\{2,\}?(?=\ \textbackslash{}(\textbar{},\ )\textbar{}(?\textless{}=\textbackslash{}(){[}A-Z{]}(?!={[}A-Z{]}){[}\^{}0-9+\textbackslash{}(\textbackslash{})\textbackslash{}{[}\textbackslash{}{]}\textbackslash{}\{\textbackslash{}\}\textbackslash{}\textbackslash{}\textbackslash{}/\_:;""{]}\{2,\}?(?=,)}
+
+
+\subsubsection*{Completeness}\label{about-this-methods-completeness}
+
+It should be noted that these expressions \textbf{do not find all the
+authors} present in the comments because they are not written
+consistently across all sequences. One might argue that it would be
+sufficient finding all patterns used in order to get all the names;
+while this would be a good, if not really feasible solution (we do not
+know how many they are), the problem remains because certain patterns
+also match formulas and other unrelated data, making them unusable for
+retrieving only names.
+
+The definitive solution would be to either manually get the names, or to
+allow the matching of extraneous data in order to remove it later from
+the list of names; this would take too long, though, and goes beyond the
+purpose of this project.
+
+
+\subsection{Parsing function}\label{the-parsing-function}
+
+The parsing function gets the \texttt{dict} \textbf{raw data} read by
+the JSON library in input and returns a \textbf{set of all author names}
+present in the comments of the loaded file (or \texttt{None} if there
+are none).
+
+Basically, after preparing the regex pattern (\texttt{re.compile()}),
+for each \texttt{comment} in a non-empty \texttt{comment\_list} the
+function gets a list of the authors' names using Python's
+\href{https://docs.python.org/3/library/re.html}{\texttt{re}} package
+for regular expressions, and uses it to update the set of unique authors
+called \texttt{authors} (which contains all names found in the file).
+The list comprehension in the \texttt{update} method is needed to
+flatten the many lists of lists returned by \texttt{re.findall()}.
+
+    \begin{tcolorbox}[breakable, size=fbox, boxrule=1pt, pad at break*=1mm,colback=cellbackground, colframe=cellborder]
+\prompt{In}{incolor}{7}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+\PY{k}{def} \PY{n+nf}{parse\PYZus{}authors\PYZus{}from\PYZus{}comments}\PY{p}{(}\PY{n}{raw\PYZus{}data}\PY{p}{)}\PY{p}{:}
+    \PY{c+c1}{\PYZsh{} Regex pattern}
+    \PY{n}{common\PYZus{}pattern} \PY{o}{=} \PY{l+s+sa}{r}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{[A\PYZhy{}Z](?!=[A\PYZhy{}Z])[\PYZca{}0\PYZhy{}9+}\PY{l+s+s1}{\PYZbs{}}\PY{l+s+s1}{(}\PY{l+s+s1}{\PYZbs{}}\PY{l+s+s1}{)}\PY{l+s+s1}{\PYZbs{}}\PY{l+s+s1}{[}\PY{l+s+s1}{\PYZbs{}}\PY{l+s+s1}{]}\PY{l+s+s1}{\PYZbs{}}\PY{l+s+s1}{\PYZob{}}\PY{l+s+s1}{\PYZbs{}}\PY{l+s+s1}{\PYZcb{}}\PY{l+s+se}{\PYZbs{}\PYZbs{}}\PY{l+s+s1}{\PYZbs{}}\PY{l+s+s1}{/\PYZus{}:;}\PY{l+s+s1}{\PYZdq{}}\PY{l+s+s1}{\PYZdq{}}\PY{l+s+s1}{]}\PY{l+s+s1}{\PYZob{}}\PY{l+s+s1}{2,\PYZcb{}?}\PY{l+s+s1}{\PYZsq{}}
+    \PY{n}{pattern\PYZus{}list} \PY{o}{=} \PY{p}{[}\PY{p}{(}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{(?\PYZlt{}=\PYZus{})}\PY{l+s+s1}{\PYZsq{}}\PY{p}{,} \PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{(?=\PYZus{})}\PY{l+s+s1}{\PYZsq{}}\PY{p}{)}\PY{p}{,} \PY{p}{(}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{(?\PYZlt{}=}\PY{l+s+s1}{\PYZbs{}}\PY{l+s+s1}{[)}\PY{l+s+s1}{\PYZsq{}}\PY{p}{,} \PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{(?=}\PY{l+s+s1}{\PYZbs{}}\PY{l+s+s1}{])}\PY{l+s+s1}{\PYZsq{}}\PY{p}{)}\PY{p}{,} \PY{p}{(}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{(?\PYZlt{}=\PYZhy{} )}\PY{l+s+s1}{\PYZsq{}}\PY{p}{,} \PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{(?= }\PY{l+s+s1}{\PYZbs{}}\PY{l+s+s1}{(|, )}\PY{l+s+s1}{\PYZsq{}}\PY{p}{)}\PY{p}{,} \PY{p}{(}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{(?\PYZlt{}=}\PY{l+s+s1}{\PYZbs{}}\PY{l+s+s1}{()}\PY{l+s+s1}{\PYZsq{}}\PY{p}{,} \PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{(?=,)}\PY{l+s+s1}{\PYZsq{}}\PY{p}{)}\PY{p}{]}
+    \PY{n}{pattern} \PY{o}{=} \PY{n}{re}\PY{o}{.}\PY{n}{compile}\PY{p}{(}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{|}\PY{l+s+s1}{\PYZsq{}}\PY{o}{.}\PY{n}{join}\PY{p}{(}\PY{p}{[}\PY{n}{start} \PY{o}{+} \PY{n}{common\PYZus{}pattern} \PY{o}{+} \PY{n}{end} \PY{k}{for} \PY{n}{start}\PY{p}{,} \PY{n}{end} \PY{o+ow}{in} \PY{n}{pattern\PYZus{}list}\PY{p}{]}\PY{p}{)}\PY{p}{)}
+
+    \PY{c+c1}{\PYZsh{} Comment parsing}
+    \PY{n}{comment\PYZus{}list} \PY{o}{=} \PY{n}{raw\PYZus{}data}\PY{o}{.}\PY{n}{get}\PY{p}{(}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{results}\PY{l+s+s1}{\PYZsq{}}\PY{p}{)}\PY{p}{[}\PY{l+m+mi}{0}\PY{p}{]}\PY{o}{.}\PY{n}{get}\PY{p}{(}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{comment}\PY{l+s+s1}{\PYZsq{}}\PY{p}{)}
+    \PY{k}{if} \PY{n}{comment\PYZus{}list}\PY{p}{:}
+        \PY{n}{authors} \PY{o}{=} \PY{n+nb}{set}\PY{p}{(}\PY{p}{)}
+        \PY{k}{for} \PY{n}{comment} \PY{o+ow}{in} \PY{n}{comment\PYZus{}list}\PY{p}{:}
+            \PY{n}{authors}\PY{o}{.}\PY{n}{update}\PY{p}{(}\PY{p}{[}\PY{n}{n} \PY{k}{for} \PY{n}{names} \PY{o+ow}{in} \PY{n}{re}\PY{o}{.}\PY{n}{findall}\PY{p}{(}\PY{n}{pattern}\PY{p}{,} \PY{n}{comment}\PY{p}{)} \PY{k}{for} \PY{n}{n} \PY{o+ow}{in} \PY{n}{names}\PY{o}{.}\PY{n}{split}\PY{p}{(}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{, }\PY{l+s+s1}{\PYZsq{}}\PY{p}{)}\PY{p}{]}\PY{p}{)}
+        \PY{k}{return} \PY{n}{authors}
+    \PY{k}{return}
+\end{Verbatim}
+\end{tcolorbox}
+
+    Some observations:
+
+\begin{itemize}
+\item the regex pattern is initially split into its
+\textbf{subpatterns} for better readability and to avoid repetitions; \item this pattern has been accurately written so as to \textbf{not return
+empty matches}, normally generated by \emph{capturing groups} (groups of
+characters between round parentheses) and for which additional
+\texttt{if}s would have been needed, resulting in a more complicated
+list comprehension; \item \textbf{some sequences do not contain comments},
+hence the check on \texttt{comment\_list}; \item a \textbf{set} has been
+chosen for the \texttt{authors\_set} variable in order to
+\textbf{exclude duplicate names}, since the data needed for the project
+only concerns the presence or absence of a given author in the comments
+of a sequence, not all his/her instances. Python's
+\href{https://docs.python.org/3/library/stdtypes.html\#set-types-set-frozenset}{\texttt{set}}
+data structure allows to store items in a hash table, without
+duplicating them.
+\end{itemize}
+
+\section{Graph building}\label{graph-building}
+
+We can now proceed by parsing the authors from all OEIS sequences in the
+\texttt{data/sequences} directory and build their graph using the
+NetworkX library, eventually saving it to disk to avoid loading every
+time all the JSON files.
+
+Considering that each \textbf{node} of the graph should contain the
+\textbf{name of a single author} (without duplicates), we only need to:
+
+\begin{enumerate}
+\item add each author of each sequence as a node;
+\item add edges between all pairs of authors which have commented the same sequence.
+\end{enumerate}
+By repeating this procedure for every file in the
+\texttt{data/sequences} directory we get a graph of all authors, where
+people who have commented the same sequence are connected by an edge.
+
+The creation of such a graph is quite simple with the NetworkX library,
+since we only need to:
+
+\begin{itemize}
+    \item parse each sequence file; \item extract its
+authors; \item add them as nodes; \item create a list of all possible pairs of
+authors in each sequence; \item add an edge for each pair.
+\end{itemize}
+
+Since the first two operations have been already implemented in the
+previous steps (see the \texttt{parse\_authors\_from\_comments()}
+function), the other two are as simple as two lines of code, knowing
+that \textbf{NetworkX does not complain when adding existing nodes or
+edges}: we do not need to check every time if a given author has already
+been inserted or if a certain edge already exists, because the library
+will \emph{not} duplicate
+them\cite{nx_graph}.
+In fact, we could even skip the \texttt{add\_nodes\_from()} function,
+since NetworkX automatically inserts non-existing nodes when adding
+edges connecting them (which is why it has been commented in the code
+below).
+
+The best way to compute all author pairs for each sequence is given by
+the \href{https://docs.python.org/3/library/itertools.html}{itertools}
+library, which implements efficient looping.
+
+Some notes about the \texttt{build\_graph\_from\_directory()} function:
+
+\begin{itemize}
+    \item all it needs as input arguments is the \textbf{path} of the directory
+containing the JSON files and a \textbf{boolean flag} to specify if the
+resulting graph should also be saved to disk (instead of simply
+returned) - along with a name for the newly created JSON graph file,
+eventually (otherwise \texttt{comments\_authors\_graph.json} is applied
+by default); \item it begins with checking the correctness of the JSON files
+path and creating the necessary variables, among which:
+
+\begin{itemize}
+\item a list of all
+files in the given directory (using
+\href{https://docs.python.org/3/library/os.html\#os.listdir}{\texttt{os.listdir()}});
+\item an empty NetworkX graph \texttt{g}; \item a
+\href{https://tqdm.github.io/}{tqdm} progress bar, only needed to
+visualize the overall progress of the parsing process.
+\end{itemize}
+\end{itemize}
+
+    \begin{tcolorbox}[breakable, size=fbox, boxrule=1pt, pad at break*=1mm,colback=cellbackground, colframe=cellborder]
+\prompt{In}{incolor}{8}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+\PY{k}{def} \PY{n+nf}{build\PYZus{}graph\PYZus{}from\PYZus{}directory}\PY{p}{(}\PY{n}{dir\PYZus{}path}\PY{p}{,} \PY{n}{save}\PY{o}{=}\PY{k+kc}{False}\PY{p}{,} \PY{n}{filename}\PY{o}{=}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{comments\PYZus{}authors\PYZus{}graph}\PY{l+s+s1}{\PYZsq{}}\PY{p}{)}\PY{p}{:}
+    \PY{c+c1}{\PYZsh{} Get file list}
+    \PY{k}{if} \PY{n}{dir\PYZus{}path}\PY{p}{[}\PY{o}{\PYZhy{}}\PY{l+m+mi}{1}\PY{p}{]} \PY{o}{!=} \PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{/}\PY{l+s+s1}{\PYZsq{}}\PY{p}{:}
+        \PY{n}{dir\PYZus{}path} \PY{o}{+}\PY{o}{=} \PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{/}\PY{l+s+s1}{\PYZsq{}}
+    \PY{n}{file\PYZus{}list} \PY{o}{=} \PY{p}{[}\PY{n}{json\PYZus{}file} \PY{k}{for} \PY{n}{json\PYZus{}file} \PY{o+ow}{in} \PY{n}{os}\PY{o}{.}\PY{n}{listdir}\PY{p}{(}\PY{n}{dir\PYZus{}path}\PY{p}{)} \PY{k}{if} \PY{n}{json\PYZus{}file}\PY{o}{.}\PY{n}{endswith}\PY{p}{(}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{.json}\PY{l+s+s1}{\PYZsq{}}\PY{p}{)}\PY{p}{]}
+
+    \PY{c+c1}{\PYZsh{} Prepare variables}
+    \PY{n}{g} \PY{o}{=} \PY{n}{nx}\PY{o}{.}\PY{n}{Graph}\PY{p}{(}\PY{p}{)}
+    \PY{n}{progress\PYZus{}bar} \PY{o}{=} \PY{n}{tqdm}\PY{o}{.}\PY{n}{tqdm}\PY{p}{(}\PY{n}{total}\PY{o}{=}\PY{n+nb}{len}\PY{p}{(}\PY{n}{file\PYZus{}list}\PY{p}{)}\PY{p}{)}
+
+    \PY{c+c1}{\PYZsh{} Parse all JSON files}
+    \PY{k}{for} \PY{n}{f} \PY{o+ow}{in} \PY{n}{file\PYZus{}list}\PY{p}{:}
+        \PY{n}{progress\PYZus{}bar}\PY{o}{.}\PY{n}{set\PYZus{}description}\PY{p}{(}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{Parsing file }\PY{l+s+si}{\PYZob{}\PYZcb{}}\PY{l+s+s1}{\PYZsq{}}\PY{o}{.}\PY{n}{format}\PY{p}{(}\PY{n}{f}\PY{p}{)}\PY{p}{)}
+        \PY{n}{file\PYZus{}path} \PY{o}{=} \PY{n}{dir\PYZus{}path} \PY{o}{+} \PY{n}{f}
+        \PY{n}{raw\PYZus{}data} \PY{o}{=} \PY{n}{load\PYZus{}json}\PY{p}{(}\PY{n}{file\PYZus{}path}\PY{p}{)}
+
+        \PY{n}{authors} \PY{o}{=} \PY{n}{parse\PYZus{}authors\PYZus{}from\PYZus{}comments}\PY{p}{(}\PY{n}{raw\PYZus{}data}\PY{p}{)}
+        \PY{k}{if} \PY{n}{authors}\PY{p}{:}
+            \PY{c+c1}{\PYZsh{} g.add\PYZus{}nodes\PYZus{}from(authors)}
+            \PY{n}{g}\PY{o}{.}\PY{n}{add\PYZus{}edges\PYZus{}from}\PY{p}{(}\PY{n+nb}{list}\PY{p}{(}\PY{n}{its}\PY{o}{.}\PY{n}{combinations}\PY{p}{(}\PY{n}{authors}\PY{p}{,} \PY{l+m+mi}{2}\PY{p}{)}\PY{p}{)}\PY{p}{)}
+        \PY{n}{progress\PYZus{}bar}\PY{o}{.}\PY{n}{update}\PY{p}{(}\PY{l+m+mi}{1}\PY{p}{)}
+
+    \PY{c+c1}{\PYZsh{} Save graph}
+    \PY{k}{if} \PY{n}{save}\PY{p}{:}
+        \PY{k}{try}\PY{p}{:}
+            \PY{k}{with} \PY{n+nb}{open}\PY{p}{(}\PY{n}{dir\PYZus{}path}\PY{o}{.}\PY{n}{split}\PY{p}{(}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{/}\PY{l+s+s1}{\PYZsq{}}\PY{p}{)}\PY{p}{[}\PY{l+m+mi}{0}\PY{p}{]} \PY{o}{+} \PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{/}\PY{l+s+s1}{\PYZsq{}} \PY{o}{+} \PY{n}{filename} \PY{o}{+} \PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{.json}\PY{l+s+s1}{\PYZsq{}}\PY{p}{,} \PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{w}\PY{l+s+s1}{\PYZsq{}}\PY{p}{)} \PY{k}{as} \PY{n}{out\PYZus{}file}\PY{p}{:}
+                \PY{n}{json}\PY{o}{.}\PY{n}{dump}\PY{p}{(}\PY{n}{nx}\PY{o}{.}\PY{n}{readwrite}\PY{o}{.}\PY{n}{json\PYZus{}graph}\PY{o}{.}\PY{n}{node\PYZus{}link\PYZus{}data}\PY{p}{(}\PY{n}{g}\PY{p}{)}\PY{p}{,} \PY{n}{out\PYZus{}file}\PY{p}{)}
+        \PY{k}{except} \PY{n+ne}{OSError}\PY{p}{:}
+            \PY{n+nb}{print}\PY{p}{(}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{Could not save file: }\PY{l+s+si}{\PYZob{}\PYZcb{}}\PY{l+s+s1}{, exiting program.}\PY{l+s+s1}{\PYZsq{}}\PY{o}{.}\PY{n}{format}\PY{p}{(}\PY{n}{filename} \PY{o}{+} \PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{.json}\PY{l+s+s1}{\PYZsq{}}\PY{p}{)}\PY{p}{)}
+
+    \PY{k}{return} \PY{n}{g}
+\end{Verbatim}
+\end{tcolorbox}
+
+    Alternatively, assuming that the graph has already been built and saved
+to disk, it can be loaded from an existing JSON file with the
+\texttt{load\_json\_graph()} function, which simply takes the JSON
+graph's path as input:
+
+    \begin{tcolorbox}[breakable, size=fbox, boxrule=1pt, pad at break*=1mm,colback=cellbackground, colframe=cellborder]
+\prompt{In}{incolor}{9}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+\PY{k}{def} \PY{n+nf}{load\PYZus{}json\PYZus{}graph}\PY{p}{(}\PY{n}{file\PYZus{}path}\PY{p}{)}\PY{p}{:}
+    \PY{k}{try}\PY{p}{:}
+        \PY{k}{with} \PY{n+nb}{open}\PY{p}{(}\PY{n}{file\PYZus{}path}\PY{p}{,} \PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{r}\PY{l+s+s1}{\PYZsq{}}\PY{p}{)} \PY{k}{as} \PY{n}{file}\PY{p}{:}
+            \PY{n}{raw\PYZus{}data} \PY{o}{=} \PY{n}{json}\PY{o}{.}\PY{n}{load}\PY{p}{(}\PY{n}{file}\PY{p}{)}
+            \PY{k}{return} \PY{n}{nx}\PY{o}{.}\PY{n}{readwrite}\PY{o}{.}\PY{n}{json\PYZus{}graph}\PY{o}{.}\PY{n}{node\PYZus{}link\PYZus{}graph}\PY{p}{(}\PY{n}{raw\PYZus{}data}\PY{p}{)}
+    \PY{k}{except} \PY{n+ne}{OSError}\PY{p}{:}
+        \PY{n+nb}{print}\PY{p}{(}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{Could not open file: }\PY{l+s+si}{\PYZob{}\PYZcb{}}\PY{l+s+s1}{, exiting program.}\PY{l+s+s1}{\PYZsq{}}\PY{o}{.}\PY{n}{format}\PY{p}{(}\PY{n}{file\PYZus{}path}\PY{o}{.}\PY{n}{split}\PY{p}{(}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{/}\PY{l+s+s1}{\PYZsq{}}\PY{p}{)}\PY{p}{[}\PY{o}{\PYZhy{}}\PY{l+m+mi}{1}\PY{p}{]}\PY{p}{)}\PY{p}{)}
+\end{Verbatim}
+\end{tcolorbox}
+
+    The graph can thus be created by running:
+
+    \begin{tcolorbox}[breakable, size=fbox, boxrule=1pt, pad at break*=1mm,colback=cellbackground, colframe=cellborder]
+\prompt{In}{incolor}{10}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+\PY{c+c1}{\PYZsh{} Graph creation (either from raw data or existing JSON graph)}
+\PY{n}{build\PYZus{}graph} \PY{o}{=} \PY{k+kc}{False}  \PY{c+c1}{\PYZsh{} Set to \PYZsq{}True\PYZsq{} in order to build graph from raw data}
+
+\PY{k}{if} \PY{n}{build\PYZus{}graph}\PY{p}{:}  \PY{c+c1}{\PYZsh{} Build graph and save to file}
+    \PY{n+nb}{print}\PY{p}{(}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+se}{\PYZbs{}n}\PY{l+s+s1}{\PYZsq{}} \PY{o}{+} \PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{Building graph g, where:}\PY{l+s+s1}{\PYZsq{}}\PY{p}{)}
+    \PY{n+nb}{print}\PY{p}{(}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{\PYZhy{} nodes represent all unique authors that can be found in each comment of every sequence;}\PY{l+s+s1}{\PYZsq{}}\PY{p}{)}
+    \PY{n+nb}{print}\PY{p}{(}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{\PYZhy{} edges link two authors who have commented the same sequence...}\PY{l+s+s1}{\PYZsq{}}\PY{p}{)}
+
+    \PY{n}{g} \PY{o}{=} \PY{n}{build\PYZus{}graph\PYZus{}from\PYZus{}directory}\PY{p}{(}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{data/sequences}\PY{l+s+s1}{\PYZsq{}}\PY{p}{,} \PY{n}{save}\PY{o}{=}\PY{k+kc}{True}\PY{p}{)}
+\PY{k}{else}\PY{p}{:}  \PY{c+c1}{\PYZsh{} Load graph from disk}
+    \PY{n+nb}{print}\PY{p}{(}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+se}{\PYZbs{}n}\PY{l+s+s1}{\PYZsq{}} \PY{o}{+} \PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{Loading graph g from }\PY{l+s+s1}{\PYZdq{}}\PY{l+s+s1}{data/comments\PYZus{}authors\PYZus{}graph.json}\PY{l+s+s1}{\PYZdq{}}\PY{l+s+s1}{, where:}\PY{l+s+s1}{\PYZsq{}}\PY{p}{)}
+    \PY{n+nb}{print}\PY{p}{(}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{\PYZhy{} nodes represent all unique authors that can be found in each comment of every sequence;}\PY{l+s+s1}{\PYZsq{}}\PY{p}{)}
+    \PY{n+nb}{print}\PY{p}{(}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{\PYZhy{} edges link two authors who have commented the same sequence.}\PY{l+s+s1}{\PYZsq{}}\PY{p}{)}
+
+    \PY{n}{g} \PY{o}{=} \PY{n}{load\PYZus{}json\PYZus{}graph}\PY{p}{(}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{data/comments\PYZus{}authors\PYZus{}graph.json}\PY{l+s+s1}{\PYZsq{}}\PY{p}{)}
+
+\PY{n+nb}{print}\PY{p}{(}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+se}{\PYZbs{}n}\PY{l+s+s1}{\PYZsq{}} \PY{o}{+} \PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{Graph g has }\PY{l+s+si}{\PYZob{}\PYZcb{}}\PY{l+s+s1}{ nodes and }\PY{l+s+si}{\PYZob{}\PYZcb{}}\PY{l+s+s1}{ edges.}\PY{l+s+s1}{\PYZsq{}}\PY{o}{.}\PY{n}{format}\PY{p}{(}\PY{n+nb}{len}\PY{p}{(}\PY{n}{g}\PY{o}{.}\PY{n}{nodes}\PY{p}{)}\PY{p}{,} \PY{n+nb}{len}\PY{p}{(}\PY{n}{g}\PY{o}{.}\PY{n}{edges}\PY{p}{)}\PY{p}{)}\PY{p}{)}
+\end{Verbatim}
+\end{tcolorbox}
+
+    \begin{Verbatim}[commandchars=\\\{\}]
+
+Loading graph g from "data/comments\_authors\_graph.json", where:
+- nodes represent all unique authors that can be found in each comment of every sequence;
+- edges link two authors who have commented the same sequence.
+
+Graph g has 2831 nodes and 49096 edges.
+    \end{Verbatim}
+
+    All variable names are lowercase with words separated by undescores in
+order to be compliant with the Python Enhancement Proposals 8 (PEP 8)
+style
+guide\cite{pep_style}.
+
+\section{Maximal cliques}\label{maximal-cliques}
+
+As stated in the introduction, our goal for this project is to explore
+the problem of \textbf{finding maximal cliques} in a graph by building
+three algorithms to find:
+
+\begin{enumerate}
+    \item a maximal clique; \item a list of all maximal
+cliques; \item the maximum clique.
+\end{enumerate}
+
+Before proceeding with the actual Python code, we shall provide first
+some useful definitions and theoretical notions .
+
+\hypertarget{definitions}{%
+\subsection{Definitions}\label{definitions}}
+
+Let \(\mathcal{G} = (\mathcal{V}, \mathcal{E})\) be an undirected graph
+where \(\mathcal{V}\) is the set of all nodes and \(\mathcal{E}\) the
+set of all edges.
+
+\begin{definition}
+A \textbf{clique} of \(\mathcal{G}\) is a \textbf{complete subgraph}, or
+a simple undirected graph in which each pair of vertices is connected by
+an
+edge\cite{clique}\cite{complete_graph}.
+\end{definition}
+
+\begin{definition}
+A \textbf{maximal clique} is a clique that cannot be extended by
+including one more adjacent vertex, meaning it is not a subset of a
+larger clique.
+\end{definition}
+
+\begin{fact}
+The \textbf{maximum clique} in a graph (i.e.~the clique of largest size)
+is always maximal, while the converse does not
+hold\cite{maximal_clique}.
+\end{fact}
+
+\begin{figure}[h]
+\centering
+\includegraphics[width=0.5\textwidth]{img/ex_cliques.png}
+\caption{The \emph{maximal cliques} of this graph are $\{1, 2, 5, 6\}$,
+$\{2, 3, 5\}$ and $\{3, 4, 5\}$. Among these, the \emph{maximum clique} is
+$\{1, 2, 5, 6\}$.}
+\label{fig:cliques}
+\end{figure}
+
+\subsection{Greedy algorithm}\label{greedy-algorithm}
+
+The easiest way to find \textbf{one arbitrary maximal clique} is to run
+on our graph \(\mathcal{G}=(\mathcal{V}, \mathcal{E})\) a \textbf{greedy
+algorithm}, which makes the local optimal choice at each step:
+
+\begin{algorithm}[H]
+\DontPrintSemicolon
+\SetAlgoLined
+
+  \KwIn{$\mathcal{G} = (\mathcal{V}, \mathcal{E})$ simple undirected graph}
+  \KwOut{$\mathcal{C} \subset \mathcal{V}$ maximal clique of $\mathcal{G}$}
+  
+  \BlankLine
+  \BlankLine
+  
+  $s \in \mathcal{V}$ starting node
+  \\$\mathcal{C} \subset \mathcal{E}, \mathcal{C} = \{s\}$ the set of nodes in the maximal clique
+  \BlankLine
+  
+  \For{$v \in \mathcal{V} \setminus \{s\}$}{
+    \If{$\exists (v, u) \in \mathcal{E} \;\;\; \forall u \in \mathcal{C}$}{
+    $\mathcal{C} = \mathcal{C} \cup \{v\}$}
+  }
+  
+\caption{\textsc{Greedy-Maximal-Clique}}
+\end{algorithm}
+
+The algorithm simply keeps adding nodes connected to all of the nodes
+already present in the current clique \(\mathcal{C}\) until no other
+node is found. \(\mathcal{C}\) can be initialised to contain any node
+\(s\) in the graph.
+
+We can devise a \textbf{more refined version} which does not test \textit{all} nodes in the graph, but only the neighbors of the nodes in the current clique, thus excluding those vertices which will surely never pass the test (e.g. nodes in different connected components), for better efficiency:
+
+\begin{algorithm}[h]
+\DontPrintSemicolon
+\SetAlgoLined
+
+  \KwIn{$\mathcal{G} = (\mathcal{V}, \mathcal{E})$ simple undirected graph}
+  \KwOut{$\mathcal{C} \subset \mathcal{V}$ maximal clique of $\mathcal{G}$}
+  
+  \BlankLine
+  \BlankLine
+  
+  $s \in \mathcal{V}$ starting node
+  \\$\mathcal{C} \subset \mathcal{E}, \mathcal{C} = \{s\}$ the set of nodes in the maximal clique
+  \BlankLine
+  
+  \While{$\mathcal{N}(\mathcal{C}) \neq \emptyset$}{
+    $v \in \mathcal{N}(\mathcal{C})$\\
+    $\mathcal{N}(\mathcal{C}) = \mathcal{N}(\mathcal{C}) \setminus \{v\}$\\
+    \If{$\exists (v, u) \in \mathcal{E} \;\;\; \forall u \in \mathcal{C}$}{
+    $\mathcal{C} = \mathcal{C} \cup \{v\}$\\
+    $\mathcal{N}(\mathcal{C}) = \mathcal{N}(\mathcal{C}) \cup \mathcal{N}(v)$}
+  }
+  
+\caption{\textsc{Greedy-Maximal-Clique-Neighbors}}
+\end{algorithm}
+
+The Python implementation is almost identical to this pseudocode, with the exception of a \textbf{\texttt{valid} flag} kept in order to quit the loop as soon as an edge $(v, u)$ does not exist, \textbf{to reduce the number of iterations}, and the fact that \textbf{only non-trivial maximal cliques are returned} (i.e. only those with more than 2 nodes are considered).
+
+The resulting function \texttt{find\_one\_maximal\_clique\_greedy()} takes in input a NetworkX graph \texttt{g} and, optionally, two boolean flags for:
+\begin{itemize}
+     \item choosing the greedy algorithm variant (\texttt{naive} or \texttt{neighbors}, of which the latter is default), and
+ \item printing the clique found (\texttt{print\_result}, \texttt{False} by default).
+\end{itemize}
+
+The choice to use nested functions has been made to unify the two variants in a single algorithm for finding a maximal clique, since they are simple enough and do not really need to be differentiated (the naive version is more a curiosity than an every-day solution).
+
+This function also checks whether the provided graph is a NetworkX undirected graph, and if it is empty or not (and raises an exception, accordingly).
+
+    \begin{tcolorbox}[breakable, size=fbox, boxrule=1pt, pad at break*=1mm,colback=cellbackground, colframe=cellborder]
+\prompt{In}{incolor}{11}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+\PY{k}{def} \PY{n+nf}{find\PYZus{}one\PYZus{}maximal\PYZus{}clique\PYZus{}greedy}\PY{p}{(}\PY{n}{g}\PY{p}{,} \PY{n}{variant}\PY{o}{=}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{neighbors}\PY{l+s+s1}{\PYZsq{}}\PY{p}{,} \PY{n}{print\PYZus{}result}\PY{o}{=}\PY{k+kc}{False}\PY{p}{)}\PY{p}{:}
+    \PY{c+c1}{\PYZsh{} Check that g is a NetworkX graph}
+    \PY{k}{if} \PY{o+ow}{not} \PY{n+nb}{isinstance}\PY{p}{(}\PY{n}{g}\PY{p}{,} \PY{n}{nx}\PY{o}{.}\PY{n}{classes}\PY{o}{.}\PY{n}{graph}\PY{o}{.}\PY{n}{Graph}\PY{p}{)}\PY{p}{:}
+        \PY{k}{raise} \PY{n}{nx}\PY{o}{.}\PY{n}{NetworkXError}\PY{p}{(}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{The provided graph is not a valid NetworkX undirected graph.}\PY{l+s+s1}{\PYZsq{}}\PY{p}{)}
+
+    \PY{k}{if} \PY{n}{g}\PY{o}{.}\PY{n}{nodes}\PY{p}{:}
+        \PY{c+c1}{\PYZsh{} Naive variant (all nodes)}
+        \PY{k}{if} \PY{n}{variant} \PY{o}{==} \PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{naive}\PY{l+s+s1}{\PYZsq{}}\PY{p}{:}
+            \PY{c+c1}{\PYZsh{} Initialization}
+            \PY{n}{vertices} \PY{o}{=} \PY{n+nb}{list}\PY{p}{(}\PY{n}{g}\PY{o}{.}\PY{n}{nodes}\PY{p}{)}
+            \PY{n}{s} \PY{o}{=} \PY{n}{random}\PY{o}{.}\PY{n}{choice}\PY{p}{(}\PY{n}{vertices}\PY{p}{)}
+            \PY{n}{vertices}\PY{o}{.}\PY{n}{remove}\PY{p}{(}\PY{n}{s}\PY{p}{)}
+            \PY{n}{clique} \PY{o}{=} \PY{p}{\PYZob{}}\PY{n}{s}\PY{p}{\PYZcb{}}
+
+            \PY{c+c1}{\PYZsh{} Greedy algorithm}
+            \PY{k}{for} \PY{n}{v} \PY{o+ow}{in} \PY{n}{vertices}\PY{p}{:}
+                \PY{n}{valid} \PY{o}{=} \PY{k+kc}{True}
+                \PY{k}{for} \PY{n}{u} \PY{o+ow}{in} \PY{n}{clique}\PY{p}{:}
+                    \PY{k}{if} \PY{o+ow}{not} \PY{n}{g}\PY{o}{.}\PY{n}{has\PYZus{}edge}\PY{p}{(}\PY{n}{v}\PY{p}{,} \PY{n}{u}\PY{p}{)}\PY{p}{:}
+                        \PY{n}{valid} \PY{o}{=} \PY{k+kc}{False}
+                        \PY{k}{break}
+                \PY{k}{if} \PY{n}{valid}\PY{p}{:}
+                    \PY{n}{clique}\PY{o}{.}\PY{n}{add}\PY{p}{(}\PY{n}{v}\PY{p}{)}
+        \PY{c+c1}{\PYZsh{} Neighbors variant}
+        \PY{k}{else}\PY{p}{:}
+            \PY{c+c1}{\PYZsh{} Wrong argument warning}
+            \PY{k}{if} \PY{n}{variant} \PY{o}{!=} \PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{neighbors}\PY{l+s+s1}{\PYZsq{}}\PY{p}{:}
+                \PY{n}{warnings}\PY{o}{.}\PY{n}{warn}\PY{p}{(}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{Invalid algorithm variant (}\PY{l+s+se}{\PYZbs{}\PYZsq{}}\PY{l+s+si}{\PYZob{}\PYZcb{}}\PY{l+s+se}{\PYZbs{}\PYZsq{}}\PY{l+s+s1}{). Using greedy algorithm restricted to neighbors as default.}\PY{l+s+s1}{\PYZsq{}}\PY{o}{.}\PY{n}{format}\PY{p}{(}\PY{n}{variant}\PY{p}{)}\PY{p}{)}
+
+            \PY{c+c1}{\PYZsh{} Initialization}
+            \PY{n}{s} \PY{o}{=} \PY{n}{random}\PY{o}{.}\PY{n}{choice}\PY{p}{(}\PY{n+nb}{list}\PY{p}{(}\PY{n}{g}\PY{o}{.}\PY{n}{nodes}\PY{p}{)}\PY{p}{)}
+            \PY{n}{neighbors} \PY{o}{=} \PY{n+nb}{list}\PY{p}{(}\PY{n}{g}\PY{o}{.}\PY{n}{neighbors}\PY{p}{(}\PY{n}{s}\PY{p}{)}\PY{p}{)}
+            \PY{n}{clique} \PY{o}{=} \PY{p}{\PYZob{}}\PY{n}{s}\PY{p}{\PYZcb{}}
+
+            \PY{c+c1}{\PYZsh{} Greedy algorithm}
+            \PY{k}{while} \PY{n}{neighbors}\PY{p}{:}
+                \PY{n}{v} \PY{o}{=} \PY{n}{neighbors}\PY{o}{.}\PY{n}{pop}\PY{p}{(}\PY{p}{)}
+                \PY{n}{valid} \PY{o}{=} \PY{k+kc}{True}
+
+                \PY{k}{for} \PY{n}{u} \PY{o+ow}{in} \PY{n}{clique}\PY{p}{:}
+                    \PY{k}{if} \PY{o+ow}{not} \PY{n}{g}\PY{o}{.}\PY{n}{has\PYZus{}edge}\PY{p}{(}\PY{n}{v}\PY{p}{,} \PY{n}{u}\PY{p}{)}\PY{p}{:}
+                        \PY{n}{valid} \PY{o}{=} \PY{k+kc}{False}
+                        \PY{k}{break}
+                \PY{k}{if} \PY{n}{valid}\PY{p}{:}
+                    \PY{n}{clique}\PY{o}{.}\PY{n}{add}\PY{p}{(}\PY{n}{v}\PY{p}{)}
+                    \PY{n}{neighbors}\PY{o}{.}\PY{n}{extend}\PY{p}{(}\PY{n+nb}{list}\PY{p}{(}\PY{n}{g}\PY{o}{.}\PY{n}{neighbors}\PY{p}{(}\PY{n}{v}\PY{p}{)}\PY{p}{)}\PY{p}{)}
+
+        \PY{c+c1}{\PYZsh{} Result \PYZam{} printing}
+        \PY{k}{if} \PY{n+nb}{len}\PY{p}{(}\PY{n}{clique}\PY{p}{)} \PY{o}{\PYZgt{}} \PY{l+m+mi}{2}\PY{p}{:}
+            \PY{k}{if} \PY{n}{print\PYZus{}result}\PY{p}{:}
+                \PY{n+nb}{print}\PY{p}{(}\PY{n}{clique}\PY{p}{)}
+            \PY{k}{return} \PY{n}{clique}
+        \PY{k}{else}\PY{p}{:}
+            \PY{k}{return}
+    \PY{k}{else}\PY{p}{:}
+        \PY{k}{raise} \PY{n}{nx}\PY{o}{.}\PY{n}{NetworkXPointlessConcept}\PY{p}{(}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{The provided graph is empty.}\PY{l+s+s1}{\PYZsq{}}\PY{p}{)}
+\end{Verbatim}
+\end{tcolorbox}
+
+    \hypertarget{greedy-algorithm-results}{%
+\subsubsection*{Greedy algorithm results}\label{greedy-algorithm-results}}
+
+    \begin{tcolorbox}[breakable, size=fbox, boxrule=1pt, pad at break*=1mm,colback=cellbackground, colframe=cellborder]
+\prompt{In}{incolor}{12}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+\PY{c+c1}{\PYZsh{} Find and print one maximal clique}
+\PY{n}{find\PYZus{}one\PYZus{}maximal\PYZus{}clique\PYZus{}greedy}\PY{p}{(}\PY{n}{g}\PY{p}{,} \PY{n}{print\PYZus{}result}\PY{o}{=}\PY{k+kc}{True}\PY{p}{)}
+\end{Verbatim}
+\end{tcolorbox}
+
+\begin{Verbatim}[commandchars=\\\{\}]
+\{'Gregory Pat Scandalis', 'Paolo P. Lava', 'M. F. Hasler', 'Franklin T. Adams-Watters', 'Omar E. Pol', 'Wolfdieter Lang', 'Reinhard Zumkeller', 'Fredrik Johansson'\}
+\end{Verbatim}
+
+\begin{tcolorbox}[breakable, size=fbox, boxrule=.5pt, pad at break*=1mm, opacityfill=0]
+\prompt{Out}{outcolor}{12}{}
+\begin{Verbatim}[commandchars=\\\{\}]
+\{'Franklin T. Adams-Watters',
+ 'Fredrik Johansson',
+ 'Gregory Pat Scandalis',
+ 'M. F. Hasler',
+ 'Omar E. Pol',
+ 'Paolo P. Lava',
+ 'Reinhard Zumkeller',
+ 'Wolfdieter Lang'\}
+\end{Verbatim}
+\end{tcolorbox}
+
+\begin{figure}[h]
+\centering
+\includegraphics[scale=0.7]{img/ex_greedy.png}
+\caption{Application of the \textit{naive} greedy algorithm to a graph with 4 nodes. The \textit{neighbors} variant would initialise $v$ (the vertices/neighbors list) to $\{1, 2\}$ and skip the last loop.}
+\label{fig:greedy}
+\end{figure}
+    
+\subsection{Bron-Kerbosch algorithm}\label{bron-kerbosch-algorithm}
+
+In order to find all maximal cliques in our graph we can proceed by
+implementing the \textbf{Bron-Kerbosch
+algorithm}\cite{bk_classic},
+designed by its Dutch namesakes in 1973 and still widely used nowadays,
+either in its classic form or in one of its more efficient variants.
+
+\hypertarget{classic-bron-kerbosch}{%
+\subsubsection{Bron-Kerbosch classic}\label{classic-bron-kerbosch}}
+
+Given a graph \(\mathcal{G}=(\mathcal{V},\mathcal{E})\), three sets of
+nodes, \(R\), \(P\) and \(X\), play an important role in the algorithm:
+
+\begin{itemize}
+    \item \(R\) is the set to be \textbf{extended or shrunk} by a new node.
+Nodes that are eligible to extend it, i.e.~that are connected to all the
+other nodes in \(R\), are collected recursively in the remaining two
+sets; \item \(P\) is the set of \textbf{candidates}, i.e.~of all nodes that
+will in due time serve as an extension to the present configuration of
+\(R\); \item \(X\) is the set of all nodes that have at an earlier stage
+already served as an extension of the present configuration of \(R\) and
+are now explicitly \textbf{excluded}.
+\end{itemize}
+
+The core of the algorithm consists of a \textbf{recursive function}
+applied to the three sets, which generates all extensions of the given
+configuration of \(R\) that can be made with the nodes in \(P\) and that
+do not contain any of the nodes in \(X\) (all extensions of \(R\)
+containing any node in \(X\) have already been generated):
+
+\begin{algorithm}[H]
+\DontPrintSemicolon
+\SetAlgoLined
+
+  \KwIn{$R$, $P$, $X$ $\subset \mathcal{V}$}
+  \KwOut{all maximal cliques of $\mathcal{G}$}
+  
+  \BlankLine
+  \BlankLine
+  
+  \If{$P = \emptyset$ and $X = \emptyset$}{
+    $R$ is a maximal clique}
+  \For{$v \in P$}{
+    \textsc{Bron-Kerbosch($R \cup \{v\}$, $P \cap \mathcal{N}(v)$, $X \cap \mathcal{N}(v)$)}\\
+    $P = P \setminus \{v\}$\\
+    $X = X \cup \{v\}$
+  }
+  
+\caption{\textsc{Bron-Kerbosch}}
+\end{algorithm}
+
+\begin{figure}[p]
+\centering
+\includegraphics[scale=0.9]{img/ex_bk_classic.png}
+\caption{Application of the Bron-Kerbosch algorithm to a graph with 4
+nodes.}
+\label{fig:bkc}
+\end{figure}
+
+The extra labor involved in maintaining the set \(X\) is motivated by
+the fact that a necessary condition for having created a clique is that
+\(P\) be empty, otherwise \(R\) could still be extended. This condition,
+however, is not sufficient, because if now \(X\) is non-empty, we know
+from the definition of \(X\) that the present configuration of \(R\) has
+already been contained in another configuration and is therefore not
+maximal, so we can state that \(R\) is a clique only as soon as
+\emph{both \(X\) and \(P\)} are empty.
+
+If at some stage \(X\) contains a node connected to all nodes in \(P\),
+we can predict that further extensions (further selection of candidates)
+will never lead to the removal of that particular node from
+subsequent configurations of \(X\) and, therefore, not to a clique.
+
+In order to find all maximal cliques of a given graph
+\(\mathcal{G} = (\mathcal{V}, \mathcal{E})\), we only need to set:
+
+\begin{itemize}
+\tightlist
+\item
+  \(R = \emptyset\);
+\item
+  \(P = \mathcal{V}\);
+\item
+  \(X = \emptyset\).
+\end{itemize}
+
+The Python implementation of this algorithm translates the pseudocode quite literally:
+
+    \begin{tcolorbox}[breakable, size=fbox, boxrule=1pt, pad at break*=1mm,colback=cellbackground, colframe=cellborder]
+\prompt{In}{incolor}{13}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+\PY{c+c1}{\PYZsh{} Classic Bron\PYZhy{}Kerbosch algorithm}
+\PY{k}{def} \PY{n+nf}{bron\PYZus{}kerbosch}\PY{p}{(}\PY{n}{r}\PY{p}{,} \PY{n}{p}\PY{p}{,} \PY{n}{x}\PY{p}{)}\PY{p}{:}
+    \PY{k}{if} \PY{o+ow}{not} \PY{n}{p} \PY{o+ow}{and} \PY{o+ow}{not} \PY{n}{x}\PY{p}{:}
+        \PY{k}{if} \PY{n+nb}{len}\PY{p}{(}\PY{n}{r}\PY{p}{)} \PY{o}{\PYZgt{}} \PY{l+m+mi}{2}\PY{p}{:}
+            \PY{k}{yield} \PY{n}{r}
+    \PY{k}{for} \PY{n}{v} \PY{o+ow}{in} \PY{p}{\PYZob{}}\PY{o}{*}\PY{n}{p}\PY{p}{\PYZcb{}}\PY{p}{:}
+        \PY{k}{yield from} \PY{n}{bron\PYZus{}kerbosch}\PY{p}{(}\PY{n}{r} \PY{o}{|} \PY{p}{\PYZob{}}\PY{n}{v}\PY{p}{\PYZcb{}}\PY{p}{,} \PY{n}{p} \PY{o}{\PYZam{}} \PY{p}{\PYZob{}}\PY{o}{*}\PY{n}{g}\PY{o}{.}\PY{n}{neighbors}\PY{p}{(}\PY{n}{v}\PY{p}{)}\PY{p}{\PYZcb{}}\PY{p}{,} \PY{n}{x} \PY{o}{\PYZam{}} \PY{p}{\PYZob{}}\PY{o}{*}\PY{n}{g}\PY{o}{.}\PY{n}{neighbors}\PY{p}{(}\PY{n}{v}\PY{p}{)}\PY{p}{\PYZcb{}}\PY{p}{)}
+        \PY{n}{p} \PY{o}{=} \PY{n}{p} \PY{o}{\PYZhy{}} \PY{p}{\PYZob{}}\PY{n}{v}\PY{p}{\PYZcb{}}
+        \PY{n}{x}\PY{o}{.}\PY{n}{add}\PY{p}{(}\PY{n}{v}\PY{p}{)}
+\end{Verbatim}
+\end{tcolorbox}
+
+    \hypertarget{bron-kerbosch-with-tomita-pivoting}{%
+\subsubsection{Bron-Kerbosch with Tomita
+pivoting}\label{bron-kerbosch-with-tomita-pivoting}}
+
+The original Bron-Kerbosch algorithm might require large amounts of
+memory, as it does not avoid backtracking from useless cases where
+\(P = \emptyset\) and \(X = \emptyset\). These unfruitful occurences can
+be decreased by choosing a \textbf{pivot vertex} \(u \in P \cup X\) in
+such a way that maximal cliques must contain either \(u\) or a vertex in
+\(P \setminus \mathcal{N}(u)\), or else the clique could be extended by
+\(u\). In other words, only nodes in \(P \setminus \mathcal{N}(u)\) will
+be candidates in each recursive call to the algorithm. A simple,
+effective way to choose the pivot is called the \textbf{Tomita
+pivoting}\cite{bk_tomita}:
+
+\begin{definition}
+The pivot \(u \in P \cup X\) is the node that maximises
+\(|P \cap \mathcal{N}(u)|\), i.e. the node having the most neighbors in
+\(P\).
+\end{definition}
+
+\begin{algorithm}[H]
+\DontPrintSemicolon
+\SetAlgoLined
+
+  \KwIn{$R$, $P$, $X$ $\subset \mathcal{V}$}
+  \KwOut{all maximal cliques of $\mathcal{G}$}
+  
+  \BlankLine
+  \BlankLine
+  
+  \If{$P = \emptyset$ and $X = \emptyset$}{
+    $R$ is a maximal clique}
+    choose pivot $u \in P \cup X$ that maximises $| P \cap \mathcal{N}(u)|$\\
+  \For{$v \in P$}{
+    \textsc{Bron-Kerbosch-Tomita-Pivoting($R \cup \{v\}$, $P \cap \mathcal{N}(v)$, $X \cap \mathcal{N}(v)$)}\\
+    $P = P \setminus \{v\}$\\
+    $X = X \cup \{v\}$
+  }
+  
+\caption{\textsc{Bron-Kerbosch-Tomita-Pivoting}}
+\end{algorithm}
+
+\begin{figure}[p]
+\centering
+\includegraphics[scale=0.9]{img/ex_bk_tomita.png}
+\caption{Application of the pivot Bron-Kerbosch algorithm to a graph with 4
+nodes.}
+\label{fig:bkt}
+\end{figure}
+
+    Again, the Python version does not differ much from the pseudocode,
+except for a \texttt{try...except} clause needed to handle empty sets
+when choosing the pivot:
+
+    \begin{tcolorbox}[breakable, size=fbox, boxrule=1pt, pad at break*=1mm,colback=cellbackground, colframe=cellborder]
+\prompt{In}{incolor}{14}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+\PY{c+c1}{\PYZsh{} Bron\PYZhy{}Kerbosch algorithm with Tomita pivoting}
+\PY{k}{def} \PY{n+nf}{bron\PYZus{}kerbosch\PYZus{}tomita\PYZus{}pivot}\PY{p}{(}\PY{n}{r}\PY{p}{,} \PY{n}{p}\PY{p}{,} \PY{n}{x}\PY{p}{)}\PY{p}{:}
+    \PY{k}{if} \PY{o+ow}{not} \PY{n}{p} \PY{o+ow}{and} \PY{o+ow}{not} \PY{n}{x}\PY{p}{:}
+        \PY{k}{if} \PY{n+nb}{len}\PY{p}{(}\PY{n}{r}\PY{p}{)} \PY{o}{\PYZgt{}} \PY{l+m+mi}{2}\PY{p}{:}
+            \PY{k}{yield} \PY{n}{r}
+    \PY{k}{try}\PY{p}{:}
+        \PY{n}{u} \PY{o}{=} \PY{n+nb}{max}\PY{p}{(}\PY{p}{\PYZob{}}\PY{p}{(}\PY{n}{v}\PY{p}{,} \PY{n+nb}{len}\PY{p}{(}\PY{p}{\PYZob{}}\PY{n}{n} \PY{k}{for} \PY{n}{n} \PY{o+ow}{in} \PY{n}{g}\PY{o}{.}\PY{n}{neighbors}\PY{p}{(}\PY{n}{v}\PY{p}{)} \PY{k}{if} \PY{n}{n} \PY{o+ow}{in} \PY{n}{p}\PY{p}{\PYZcb{}}\PY{p}{)}\PY{p}{)} \PY{k}{for} \PY{n}{v} \PY{o+ow}{in} \PY{n}{p} \PY{o}{|} \PY{n}{x}\PY{p}{\PYZcb{}}\PY{p}{,} \PY{n}{key}\PY{o}{=}\PY{k}{lambda} \PY{n}{v}\PY{p}{:} \PY{n}{v}\PY{p}{[}\PY{l+m+mi}{1}\PY{p}{]}\PY{p}{)}\PY{p}{[}\PY{l+m+mi}{0}\PY{p}{]}
+        \PY{k}{for} \PY{n}{v} \PY{o+ow}{in} \PY{n}{p} \PY{o}{\PYZhy{}} \PY{p}{\PYZob{}}\PY{o}{*}\PY{n}{g}\PY{o}{.}\PY{n}{neighbors}\PY{p}{(}\PY{n}{u}\PY{p}{)}\PY{p}{\PYZcb{}}\PY{p}{:}
+            \PY{k}{yield from} \PY{n}{bron\PYZus{}kerbosch\PYZus{}tomita\PYZus{}pivot}\PY{p}{(}\PY{n}{r} \PY{o}{|} \PY{p}{\PYZob{}}\PY{n}{v}\PY{p}{\PYZcb{}}\PY{p}{,} \PY{n}{p} \PY{o}{\PYZam{}} \PY{p}{\PYZob{}}\PY{o}{*}\PY{n}{g}\PY{o}{.}\PY{n}{neighbors}\PY{p}{(}\PY{n}{v}\PY{p}{)}\PY{p}{\PYZcb{}}\PY{p}{,} \PY{n}{x} \PY{o}{\PYZam{}} \PY{p}{\PYZob{}}\PY{o}{*}\PY{n}{g}\PY{o}{.}\PY{n}{neighbors}\PY{p}{(}\PY{n}{v}\PY{p}{)}\PY{p}{\PYZcb{}}\PY{p}{)}
+            \PY{n}{p} \PY{o}{=} \PY{n}{p} \PY{o}{\PYZhy{}} \PY{p}{\PYZob{}}\PY{n}{v}\PY{p}{\PYZcb{}}
+            \PY{n}{x}\PY{o}{.}\PY{n}{add}\PY{p}{(}\PY{n}{v}\PY{p}{)}
+    \PY{k}{except} \PY{n+ne}{ValueError}\PY{p}{:}
+        \PY{k}{pass}
+\end{Verbatim}
+\end{tcolorbox}
+
+    \hypertarget{bron-kerbosch-with-degeneracy-ordering}{%
+\subsubsection{Bron-Kerbosch with degeneracy
+ordering}\label{bron-kerbosch-with-degeneracy-ordering}}
+
+Apart from the pivoting strategy, the \textbf{order} in which the
+vertices of \(\mathcal{G}\) are processed by the Bron--Kerbosch
+algorithm is also very important. Before continuing, let us see the
+notion of \textbf{degeneracy}, which will help to illustrate the next
+approach.
+
+\begin{definition}
+The \textbf{degeneracy} of an \(n\)-vertex graph
+\(\mathcal{G} = (\mathcal{V}, \mathcal{E})\) is the smallest number
+\(d\) such that every subgraph of \(\mathcal{G}\) contains a vertex of
+degree at most \(d\).
+\end{definition}
+
+\begin{definition}
+A graph with degeneracy \(d\) also has a \textbf{degeneracy ordering},
+i.e. an ordering of the vertices such that each vertex has \(d\) or
+fewer neighbors that come later in the ordering.
+\end{definition}
+
+Degeneracy, along with a degeneracy ordering, can be computed by a
+simple \textbf{greedy strategy} of repeatedly removing a vertex with
+smallest degree (and its incident edges) from the graph until it is
+empty:
+
+\begin{algorithm}[H]
+\DontPrintSemicolon
+\SetAlgoLined
+
+  \KwIn{$\mathcal{G} = (\mathcal{V}, \mathcal{E})$ simple undirected graph}
+  \KwOut{$d$ degeneracy ordering of $\mathcal{G}$}
+  
+  \BlankLine
+  \BlankLine
+  
+  $D$ array s.t. $D[i]$ stores the list of vertices $v \in \mathcal{V}$ of degree $i$\\
+  $d$ array containing the degeneracy ordering\\
+  
+  \BlankLine
+  
+  \While{$D \neq \emptyset$}{
+  scan $D$ until the first non-empty list $D[i]$ is found\\
+  move a vertex $u$ from $D[i]$ to $d$\\
+  \For{$v \in \mathcal{N}(u)$}{
+    move $v$ from $D[j]$ to $D[j-1]$, where $j$ is the degree of $v$}
+    remove $u$ from the graph $\mathcal{G}$
+  }
+  
+\caption{\textsc{Degeneracy-Ordering}}
+\end{algorithm}
+
+\begin{figure}[h]
+\centering
+\includegraphics[width=1\textwidth]{img/ex_deg_order.png}
+\caption{Degeneracy ordering algorithm applied to the graph shown in
+figures \ref{fig:bkc} and \ref{fig:bkt}.}
+\label{fig:deg}
+\end{figure}
+
+Using these facts, Eppstein et al.\cite{bk_deg} showed in 2010 that there exists a nearly-optimal algorithm for
+\textbf{enumerating all maximal cliques parametrized by degeneracy}, and that in order to achieve this result a modification of the classic
+Bron--Kerbosch algorithm was sufficient.
+
+They performed the outer level of recursion of the Bron--Kerbosch
+algorithm without pivoting, using a degeneracy ordering to order the
+sequence of recursive calls, and then switched at inner levels of
+recursion to the pivoting rule of Tomita et
+al.\cite{bk_tomita}:
+
+\begin{algorithm}[H]
+\DontPrintSemicolon
+\SetAlgoLined
+
+  \KwIn{$\mathcal{G} = (\mathcal{V}, \mathcal{E})$ simple undirected graph}
+  \KwOut{all maximal cliques of $\mathcal{G}$}
+  
+  \BlankLine
+  \BlankLine
+  
+  $R = \emptyset$\\
+  $P = \mathcal{V}$\\
+  $X = \emptyset$\\
+  $d = \textsc{Degeneracy-Ordering(}\mathcal{G}\textsc{)}$\\
+  
+  \BlankLine
+  
+  \For{$v \in d$}{
+  \textsc{Bron-Kerbosch-Tomita-Pivoting($R \cup \{v\}$, $P \cap \mathcal{N}(v)$, $X \cap \mathcal{N}(v)$)}\\
+  $P = P \setminus \{v\}$\\
+    $X = X \cup \{v\}$
+  }
+  
+\caption{\textsc{Bron-Kerbosch-Degeneracy}}
+\end{algorithm}
+
+Thanks to this ordering, the sets \(P\) passed to each of the recursive
+calls will have at most \(d\) elements in them, minimizing the recursive
+calls within each of the outer calls, while the set \(X\) will consist
+of all earlier neighbors of \(v\) (could be larger than \(d\)).
+
+    These two algorithms can be implemented in Python as follows:
+
+    \begin{tcolorbox}[breakable, size=fbox, boxrule=1pt, pad at break*=1mm,colback=cellbackground, colframe=cellborder]
+\prompt{In}{incolor}{15}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+\PY{k}{def} \PY{n+nf}{get\PYZus{}degeneracy\PYZus{}ordering}\PY{p}{(}\PY{n}{graph}\PY{p}{)}\PY{p}{:}
+    \PY{c+c1}{\PYZsh{} Check that g is a NetworkX graph}
+    \PY{k}{if} \PY{o+ow}{not} \PY{n+nb}{isinstance}\PY{p}{(}\PY{n}{graph}\PY{p}{,} \PY{n}{nx}\PY{o}{.}\PY{n}{classes}\PY{o}{.}\PY{n}{graph}\PY{o}{.}\PY{n}{Graph}\PY{p}{)}\PY{p}{:}
+        \PY{k}{raise} \PY{n}{nx}\PY{o}{.}\PY{n}{NetworkXError}\PY{p}{(}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{The provided graph is not a valid NetworkX undirected graph.}\PY{l+s+s1}{\PYZsq{}}\PY{p}{)}
+
+    \PY{k}{if} \PY{n}{graph}\PY{o}{.}\PY{n}{nodes}\PY{p}{:}
+        \PY{n}{g} \PY{o}{=} \PY{n}{graph}\PY{o}{.}\PY{n}{copy}\PY{p}{(}\PY{p}{)}
+
+        \PY{c+c1}{\PYZsh{} Create and populate lists of lists}
+        \PY{n}{max\PYZus{}degree} \PY{o}{=} \PY{n+nb}{max}\PY{p}{(}\PY{p}{[}\PY{n}{d} \PY{k}{for} \PY{n}{n}\PY{p}{,} \PY{n}{d} \PY{o+ow}{in} \PY{n}{g}\PY{o}{.}\PY{n}{degree}\PY{p}{(}\PY{p}{)}\PY{p}{]}\PY{p}{)}
+        \PY{n}{d} \PY{o}{=} \PY{p}{[}\PY{p}{[}\PY{p}{]} \PY{k}{for} \PY{n}{deg} \PY{o+ow}{in} \PY{n+nb}{range}\PY{p}{(}\PY{n}{max\PYZus{}degree} \PY{o}{+} \PY{l+m+mi}{1}\PY{p}{)}\PY{p}{]}
+        \PY{k}{for} \PY{n}{node} \PY{o+ow}{in} \PY{n}{g}\PY{o}{.}\PY{n}{degree}\PY{p}{(}\PY{p}{)}\PY{p}{:}
+            \PY{n}{d}\PY{p}{[}\PY{n}{node}\PY{p}{[}\PY{l+m+mi}{1}\PY{p}{]}\PY{p}{]}\PY{o}{.}\PY{n}{append}\PY{p}{(}\PY{n}{node}\PY{p}{[}\PY{l+m+mi}{0}\PY{p}{]}\PY{p}{)}
+
+        \PY{c+c1}{\PYZsh{} Degeneracy ordering}
+        \PY{n}{degeneracy\PYZus{}ordering} \PY{o}{=} \PY{p}{[}\PY{p}{]}
+        \PY{k}{while} \PY{n}{d}\PY{p}{:}
+            \PY{c+c1}{\PYZsh{} Get current node u}
+            \PY{n}{u} \PY{o}{=} \PY{n+nb}{next}\PY{p}{(}\PY{n}{i} \PY{k}{for} \PY{n}{i} \PY{o+ow}{in} \PY{n}{d} \PY{k}{if} \PY{n}{i}\PY{p}{)}\PY{o}{.}\PY{n}{pop}\PY{p}{(}\PY{p}{)}
+            \PY{n}{degeneracy\PYZus{}ordering}\PY{o}{.}\PY{n}{append}\PY{p}{(}\PY{n}{u}\PY{p}{)}
+
+            \PY{c+c1}{\PYZsh{} Move neighbors of current node}
+            \PY{k}{for} \PY{n}{v} \PY{o+ow}{in} \PY{p}{\PYZob{}}\PY{o}{*}\PY{n}{g}\PY{o}{.}\PY{n}{neighbors}\PY{p}{(}\PY{n}{u}\PY{p}{)}\PY{p}{\PYZcb{}}\PY{p}{:}
+                \PY{n}{v\PYZus{}deg} \PY{o}{=} \PY{n}{g}\PY{o}{.}\PY{n}{degree}\PY{p}{(}\PY{n}{v}\PY{p}{)}
+                \PY{n}{d}\PY{p}{[}\PY{n}{v\PYZus{}deg}\PY{p}{]}\PY{o}{.}\PY{n}{remove}\PY{p}{(}\PY{n}{v}\PY{p}{)}
+                \PY{n}{d}\PY{p}{[}\PY{n}{v\PYZus{}deg}\PY{o}{\PYZhy{}}\PY{l+m+mi}{1}\PY{p}{]}\PY{o}{.}\PY{n}{append}\PY{p}{(}\PY{n}{v}\PY{p}{)}
+
+            \PY{c+c1}{\PYZsh{} Remove current node from graph}
+            \PY{n}{g}\PY{o}{.}\PY{n}{remove\PYZus{}node}\PY{p}{(}\PY{n}{u}\PY{p}{)}
+
+            \PY{c+c1}{\PYZsh{} Remove last list of d if empty (ensure termination of while loop)}
+            \PY{k}{if} \PY{o+ow}{not} \PY{n}{d}\PY{p}{[}\PY{n+nb}{len}\PY{p}{(}\PY{n}{d}\PY{p}{)}\PY{o}{\PYZhy{}}\PY{l+m+mi}{1}\PY{p}{]}\PY{p}{:}
+                \PY{n}{d}\PY{o}{.}\PY{n}{pop}\PY{p}{(}\PY{p}{)}
+
+        \PY{k}{return} \PY{n}{degeneracy\PYZus{}ordering}
+    \PY{k}{else}\PY{p}{:}
+        \PY{k}{raise} \PY{n}{nx}\PY{o}{.}\PY{n}{NetworkXPointlessConcept}\PY{p}{(}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{The provided graph is empty.}\PY{l+s+s1}{\PYZsq{}}\PY{p}{)}
+\end{Verbatim}
+\end{tcolorbox}
+
+    \texttt{get\_degeneracy\_ordering()} begins by checking whether the
+provided graph is a NetworkX undirected graph, and if it is empty or
+not, and raises an exception, accordingly. It then continues by making a
+copy of the input graph, which is necessary because the progressive
+removal of nodes would otherwise leave the original graph empty after
+applying this function to it.
+
+The function does not differ much from its pseudocode, apart from the
+use of a \texttt{while} loop which is terminated by progressively
+removing any empty list at the tail of \texttt{d} (since neighbors of
+the current node will always be moved to a list of lower degree, and
+never higher). Given the need for dynamic arrays, the simple Python list
+has been used instead of more efficient data structures like in the
+clique methods.
+
+    \begin{tcolorbox}[breakable, size=fbox, boxrule=1pt, pad at break*=1mm,colback=cellbackground, colframe=cellborder]
+\prompt{In}{incolor}{16}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+\PY{c+c1}{\PYZsh{} Bron\PYZhy{}Kerbosch algorithm with Tomita pivoting \PYZam{} degeneracy ordering}
+\PY{k}{def} \PY{n+nf}{bron\PYZus{}kerbosch\PYZus{}degeneracy}\PY{p}{(}\PY{n}{r}\PY{p}{,} \PY{n}{p}\PY{p}{,} \PY{n}{x}\PY{p}{)}\PY{p}{:}
+    \PY{k}{for} \PY{n}{v} \PY{o+ow}{in} \PY{n}{get\PYZus{}degeneracy\PYZus{}ordering}\PY{p}{(}\PY{n}{g}\PY{p}{)}\PY{p}{:}
+        \PY{k}{yield from} \PY{n}{bron\PYZus{}kerbosch\PYZus{}tomita\PYZus{}pivot}\PY{p}{(}\PY{n}{r} \PY{o}{|} \PY{p}{\PYZob{}}\PY{n}{v}\PY{p}{\PYZcb{}}\PY{p}{,} \PY{n}{p} \PY{o}{\PYZam{}} \PY{p}{\PYZob{}}\PY{o}{*}\PY{n}{g}\PY{o}{.}\PY{n}{neighbors}\PY{p}{(}\PY{n}{v}\PY{p}{)}\PY{p}{\PYZcb{}}\PY{p}{,} \PY{n}{x} \PY{o}{\PYZam{}} \PY{p}{\PYZob{}}\PY{o}{*}\PY{n}{g}\PY{o}{.}\PY{n}{neighbors}\PY{p}{(}\PY{n}{v}\PY{p}{)}\PY{p}{\PYZcb{}}\PY{p}{)}
+        \PY{n}{p} \PY{o}{=} \PY{n}{p} \PY{o}{\PYZhy{}} \PY{p}{\PYZob{}}\PY{n}{v}\PY{p}{\PYZcb{}}
+        \PY{n}{x}\PY{o}{.}\PY{n}{add}\PY{p}{(}\PY{n}{v}\PY{p}{)}
+\end{Verbatim}
+\end{tcolorbox}
+
+    \hypertarget{complexity}{%
+\subsubsection{Complexity}\label{complexity}}
+
+The \textbf{worst-case analysis} for the Bron-Kerbosch algorithm is
+\(O(3^{\frac{n}{3}})\) running time. It is optimal as a function of
+\(n\), since there are at most \(3^{\frac{n}{3}}\) maximal cliques in an
+\(n\)-vertex
+graph\cite{moon}.
+It also has the nice property that it generates \textbf{all and only
+maximal cliques without duplication}.
+
+\textbf{Eppstein et al.'s variant} instead runs in time
+\(O(dn3^{\frac{d}{3}})\), and the degeneracy \(d\) is expected to be low
+in many real-world applications. The time needed to obtain the
+degeneracy ordering is irrelevant, as it runs linear to the number of
+vertices \(n\) and edges \(m\) of the graph, i.e. \(O(n+m)\).
+
+Eppstein et al.'s results originate from the observation that given a
+graph \(\mathcal{G} = (\mathcal{V}, \mathcal{E})\) with degeneracy
+\(d\):
+
+\begin{itemize}
+    \item \(\mathcal{G}\) has at most \(d(n-\frac{d+1}{2})\) edges; \item the
+maximum clique size can be at most \(d+1\), for any larger clique would
+form a subgraph in which all vertices have degree higher than \(d\); \item if \(d\) is a multiple of \(3\) and \(n \geq d+3\), then the largest
+possible number of maximal cliques is \((n-d)3^{\frac{d}{3}}\).
+\end{itemize}
+
+\textbf{Real-world graphs} are actually quite \textbf{sparse}, making
+the \textbf{degeneracy} version of the Bron-Kerbosch algorithm an
+\textbf{excellent choice}.
+
+    \hypertarget{wrapper-function-for-the-bron-kerbosch-algorithm}{%
+\subsubsection*{Wrapper function for the Bron-Kerbosch
+algorithm}\label{wrapper-function-for-the-bron-kerbosch-algorithm}}
+
+The actual Python implementation of the presented algorithms consist of
+a single method \texttt{find\_all\_maximal\_cliques\_bk()} which defines
+three nested functions, one for each Bron-Kerbosch variant, and which
+takes in input only a NetworkX graph \texttt{g} and, optionally, two
+boolean flags for:
+
+\begin{itemize}
+    \item choosing the Bron-Kerbosch variant
+(\texttt{classic}, \texttt{tomita} and \texttt{degeneracy}, of which the
+latter is default), and \item printing the cliques found
+(\texttt{print\_result}, \texttt{False} by default).
+\end{itemize}
+
+The choice to use nested functions has been made to avoid repeating, for
+every variant, the definition of the sets \(R\), \(P\) and \(X\) used in
+all three variants of the algorithm, as well as the checks on the input
+graph. This way the algorithms work correctly without compromising their
+legibility with language-specific code, resulting in an almost literal
+implementation of the pseudocode previously provided.
+
+The complete code for the function to find all maximal cliques is then
+the following:
+
+    \begin{tcolorbox}[breakable, size=fbox, boxrule=1pt, pad at break*=1mm,colback=cellbackground, colframe=cellborder]
+\prompt{In}{incolor}{17}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+\PY{k}{def} \PY{n+nf}{find\PYZus{}all\PYZus{}maximal\PYZus{}cliques\PYZus{}bk}\PY{p}{(}\PY{n}{g}\PY{p}{,} \PY{n}{variant}\PY{o}{=}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{degeneracy}\PY{l+s+s1}{\PYZsq{}}\PY{p}{,} \PY{n}{print\PYZus{}result}\PY{o}{=}\PY{k+kc}{False}\PY{p}{)}\PY{p}{:}    
+    \PY{c+c1}{\PYZsh{} Check that g is a NetworkX graph}
+    \PY{k}{if} \PY{o+ow}{not} \PY{n+nb}{isinstance}\PY{p}{(}\PY{n}{g}\PY{p}{,} \PY{n}{nx}\PY{o}{.}\PY{n}{classes}\PY{o}{.}\PY{n}{graph}\PY{o}{.}\PY{n}{Graph}\PY{p}{)}\PY{p}{:}
+        \PY{k}{raise} \PY{n}{nx}\PY{o}{.}\PY{n}{NetworkXError}\PY{p}{(}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{The provided graph is not a valid NetworkX undirected graph.}\PY{l+s+s1}{\PYZsq{}}\PY{p}{)}
+
+    \PY{c+c1}{\PYZsh{} Classic Bron\PYZhy{}Kerbosch algorithm}
+    \PY{k}{def} \PY{n+nf}{bron\PYZus{}kerbosch}\PY{p}{(}\PY{n}{r}\PY{p}{,} \PY{n}{p}\PY{p}{,} \PY{n}{x}\PY{p}{)}\PY{p}{:}
+        \PY{k}{if} \PY{o+ow}{not} \PY{n}{p} \PY{o+ow}{and} \PY{o+ow}{not} \PY{n}{x}\PY{p}{:}
+            \PY{k}{if} \PY{n+nb}{len}\PY{p}{(}\PY{n}{r}\PY{p}{)} \PY{o}{\PYZgt{}} \PY{l+m+mi}{2}\PY{p}{:}
+                \PY{k}{yield} \PY{n}{r}
+        \PY{k}{for} \PY{n}{v} \PY{o+ow}{in} \PY{p}{\PYZob{}}\PY{o}{*}\PY{n}{p}\PY{p}{\PYZcb{}}\PY{p}{:}
+            \PY{k}{yield from} \PY{n}{bron\PYZus{}kerbosch}\PY{p}{(}\PY{n}{r} \PY{o}{|} \PY{p}{\PYZob{}}\PY{n}{v}\PY{p}{\PYZcb{}}\PY{p}{,} \PY{n}{p} \PY{o}{\PYZam{}} \PY{p}{\PYZob{}}\PY{o}{*}\PY{n}{g}\PY{o}{.}\PY{n}{neighbors}\PY{p}{(}\PY{n}{v}\PY{p}{)}\PY{p}{\PYZcb{}}\PY{p}{,} \PY{n}{x} \PY{o}{\PYZam{}} \PY{p}{\PYZob{}}\PY{o}{*}\PY{n}{g}\PY{o}{.}\PY{n}{neighbors}\PY{p}{(}\PY{n}{v}\PY{p}{)}\PY{p}{\PYZcb{}}\PY{p}{)}
+            \PY{n}{p} \PY{o}{=} \PY{n}{p} \PY{o}{\PYZhy{}} \PY{p}{\PYZob{}}\PY{n}{v}\PY{p}{\PYZcb{}}
+            \PY{n}{x}\PY{o}{.}\PY{n}{add}\PY{p}{(}\PY{n}{v}\PY{p}{)}
+
+    \PY{c+c1}{\PYZsh{} Bron\PYZhy{}Kerbosch algorithm with Tomita pivoting}
+    \PY{k}{def} \PY{n+nf}{bron\PYZus{}kerbosch\PYZus{}tomita\PYZus{}pivot}\PY{p}{(}\PY{n}{r}\PY{p}{,} \PY{n}{p}\PY{p}{,} \PY{n}{x}\PY{p}{)}\PY{p}{:}
+        \PY{k}{if} \PY{o+ow}{not} \PY{n}{p} \PY{o+ow}{and} \PY{o+ow}{not} \PY{n}{x}\PY{p}{:}
+            \PY{k}{if} \PY{n+nb}{len}\PY{p}{(}\PY{n}{r}\PY{p}{)} \PY{o}{\PYZgt{}} \PY{l+m+mi}{2}\PY{p}{:}
+                \PY{k}{yield} \PY{n}{r}
+        \PY{k}{try}\PY{p}{:}
+            \PY{n}{u} \PY{o}{=} \PY{n+nb}{max}\PY{p}{(}\PY{p}{\PYZob{}}\PY{p}{(}\PY{n}{v}\PY{p}{,} \PY{n+nb}{len}\PY{p}{(}\PY{p}{\PYZob{}}\PY{n}{n} \PY{k}{for} \PY{n}{n} \PY{o+ow}{in} \PY{n}{g}\PY{o}{.}\PY{n}{neighbors}\PY{p}{(}\PY{n}{v}\PY{p}{)} \PY{k}{if} \PY{n}{n} \PY{o+ow}{in} \PY{n}{p}\PY{p}{\PYZcb{}}\PY{p}{)}\PY{p}{)} \PY{k}{for} \PY{n}{v} \PY{o+ow}{in} \PY{n}{p} \PY{o}{|} \PY{n}{x}\PY{p}{\PYZcb{}}\PY{p}{,} \PY{n}{key}\PY{o}{=}\PY{k}{lambda} \PY{n}{v}\PY{p}{:} \PY{n}{v}\PY{p}{[}\PY{l+m+mi}{1}\PY{p}{]}\PY{p}{)}\PY{p}{[}\PY{l+m+mi}{0}\PY{p}{]}
+            \PY{k}{for} \PY{n}{v} \PY{o+ow}{in} \PY{n}{p} \PY{o}{\PYZhy{}} \PY{p}{\PYZob{}}\PY{o}{*}\PY{n}{g}\PY{o}{.}\PY{n}{neighbors}\PY{p}{(}\PY{n}{u}\PY{p}{)}\PY{p}{\PYZcb{}}\PY{p}{:}
+                \PY{k}{yield from} \PY{n}{bron\PYZus{}kerbosch\PYZus{}tomita\PYZus{}pivot}\PY{p}{(}\PY{n}{r} \PY{o}{|} \PY{p}{\PYZob{}}\PY{n}{v}\PY{p}{\PYZcb{}}\PY{p}{,} \PY{n}{p} \PY{o}{\PYZam{}} \PY{p}{\PYZob{}}\PY{o}{*}\PY{n}{g}\PY{o}{.}\PY{n}{neighbors}\PY{p}{(}\PY{n}{v}\PY{p}{)}\PY{p}{\PYZcb{}}\PY{p}{,} \PY{n}{x} \PY{o}{\PYZam{}} \PY{p}{\PYZob{}}\PY{o}{*}\PY{n}{g}\PY{o}{.}\PY{n}{neighbors}\PY{p}{(}\PY{n}{v}\PY{p}{)}\PY{p}{\PYZcb{}}\PY{p}{)}
+                \PY{n}{p} \PY{o}{=} \PY{n}{p} \PY{o}{\PYZhy{}} \PY{p}{\PYZob{}}\PY{n}{v}\PY{p}{\PYZcb{}}
+                \PY{n}{x}\PY{o}{.}\PY{n}{add}\PY{p}{(}\PY{n}{v}\PY{p}{)}
+        \PY{k}{except} \PY{n+ne}{ValueError}\PY{p}{:}
+            \PY{k}{pass}
+
+    \PY{c+c1}{\PYZsh{} Bron\PYZhy{}Kerbosch algorithm with Tomita pivoting \PYZam{} degeneracy ordering}
+    \PY{k}{def} \PY{n+nf}{bron\PYZus{}kerbosch\PYZus{}degeneracy}\PY{p}{(}\PY{n}{r}\PY{p}{,} \PY{n}{p}\PY{p}{,} \PY{n}{x}\PY{p}{)}\PY{p}{:}
+        \PY{k}{for} \PY{n}{v} \PY{o+ow}{in} \PY{n}{get\PYZus{}degeneracy\PYZus{}ordering}\PY{p}{(}\PY{n}{g}\PY{p}{)}\PY{p}{:}
+            \PY{k}{yield from} \PY{n}{bron\PYZus{}kerbosch\PYZus{}tomita\PYZus{}pivot}\PY{p}{(}\PY{n}{r} \PY{o}{|} \PY{p}{\PYZob{}}\PY{n}{v}\PY{p}{\PYZcb{}}\PY{p}{,} \PY{n}{p} \PY{o}{\PYZam{}} \PY{p}{\PYZob{}}\PY{o}{*}\PY{n}{g}\PY{o}{.}\PY{n}{neighbors}\PY{p}{(}\PY{n}{v}\PY{p}{)}\PY{p}{\PYZcb{}}\PY{p}{,} \PY{n}{x} \PY{o}{\PYZam{}} \PY{p}{\PYZob{}}\PY{o}{*}\PY{n}{g}\PY{o}{.}\PY{n}{neighbors}\PY{p}{(}\PY{n}{v}\PY{p}{)}\PY{p}{\PYZcb{}}\PY{p}{)}
+            \PY{n}{p} \PY{o}{=} \PY{n}{p} \PY{o}{\PYZhy{}} \PY{p}{\PYZob{}}\PY{n}{v}\PY{p}{\PYZcb{}}
+            \PY{n}{x}\PY{o}{.}\PY{n}{add}\PY{p}{(}\PY{n}{v}\PY{p}{)}
+
+    \PY{c+c1}{\PYZsh{} Main clique function}
+    \PY{k}{if} \PY{n}{g}\PY{o}{.}\PY{n}{nodes}\PY{p}{:}
+        \PY{c+c1}{\PYZsh{} Set initialization}
+        \PY{n}{r} \PY{o}{=} \PY{p}{\PYZob{}}\PY{o}{*}\PY{p}{(}\PY{p}{)}\PY{p}{\PYZcb{}}
+        \PY{n}{p} \PY{o}{=} \PY{p}{\PYZob{}}\PY{o}{*}\PY{n}{g}\PY{o}{.}\PY{n}{nodes}\PY{p}{\PYZcb{}}
+        \PY{n}{x} \PY{o}{=} \PY{p}{\PYZob{}}\PY{o}{*}\PY{p}{(}\PY{p}{)}\PY{p}{\PYZcb{}}
+
+        \PY{c+c1}{\PYZsh{} Bron\PYZhy{}Kerbosch algorithm}
+        \PY{k}{if} \PY{n}{variant} \PY{o}{==} \PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{classic}\PY{l+s+s1}{\PYZsq{}}\PY{p}{:}
+            \PY{n}{cliques} \PY{o}{=} \PY{n}{bron\PYZus{}kerbosch}\PY{p}{(}\PY{n}{r}\PY{p}{,} \PY{n}{p}\PY{p}{,} \PY{n}{x}\PY{p}{)}
+        \PY{k}{elif} \PY{n}{variant} \PY{o}{==} \PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{tomita}\PY{l+s+s1}{\PYZsq{}}\PY{p}{:}
+            \PY{n}{cliques} \PY{o}{=} \PY{n}{bron\PYZus{}kerbosch\PYZus{}tomita\PYZus{}pivot}\PY{p}{(}\PY{n}{r}\PY{p}{,} \PY{n}{p}\PY{p}{,} \PY{n}{x}\PY{p}{)}
+        \PY{k}{elif} \PY{n}{variant} \PY{o}{==} \PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{degeneracy}\PY{l+s+s1}{\PYZsq{}}\PY{p}{:}
+            \PY{n}{cliques} \PY{o}{=} \PY{n}{bron\PYZus{}kerbosch\PYZus{}degeneracy}\PY{p}{(}\PY{n}{r}\PY{p}{,} \PY{n}{p}\PY{p}{,} \PY{n}{x}\PY{p}{)}
+        \PY{k}{else}\PY{p}{:}
+            \PY{n}{warnings}\PY{o}{.}\PY{n}{warn}\PY{p}{(}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{Invalid algorithm variant (}\PY{l+s+se}{\PYZbs{}\PYZsq{}}\PY{l+s+si}{\PYZob{}\PYZcb{}}\PY{l+s+se}{\PYZbs{}\PYZsq{}}\PY{l+s+s1}{). Using Bron\PYZhy{}Kerbosch with degeneracy ordering as default.}\PY{l+s+s1}{\PYZsq{}}\PY{o}{.}\PY{n}{format}\PY{p}{(}\PY{n}{variant}\PY{p}{)}\PY{p}{)}
+            \PY{n}{cliques} \PY{o}{=} \PY{n}{bron\PYZus{}kerbosch\PYZus{}degeneracy}\PY{p}{(}\PY{n}{r}\PY{p}{,} \PY{n}{p}\PY{p}{,} \PY{n}{x}\PY{p}{)}
+
+        \PY{c+c1}{\PYZsh{} Printing}
+        \PY{k}{if} \PY{n}{print\PYZus{}result}\PY{p}{:}
+            \PY{n+nb}{print}\PY{p}{(}\PY{o}{*}\PY{n}{cliques}\PY{p}{,} \PY{n}{sep}\PY{o}{=}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+se}{\PYZbs{}n}\PY{l+s+s1}{\PYZsq{}}\PY{p}{)}
+
+        \PY{k}{return} \PY{n}{cliques}
+    \PY{k}{else}\PY{p}{:}
+        \PY{k}{raise} \PY{n}{nx}\PY{o}{.}\PY{n}{NetworkXPointlessConcept}\PY{p}{(}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{The provided graph is empty.}\PY{l+s+s1}{\PYZsq{}}\PY{p}{)}
+\end{Verbatim}
+\end{tcolorbox}
+
+    Note: the \textbf{degeneracy ordering function} has been left outside
+the \texttt{find\_all\_maximal\_cliques()} method since it does not
+require particular checks on the graph (except those for its validity),
+nor the definition of subsets of nodes, meaning that unlike the
+Bron-Kerbosch algorithms, it can be used outside this particular
+application (for different purposes) without stringent requisites.
+
+    It should also be noted that sets \(R\), \(P\) and \(X\) are implemented
+using Python's efficient
+\href{https://docs.python.org/3/library/stdtypes.html\#set-types-set-frozenset}{\texttt{set}},
+and in particular empty sets are created using set literals
+\texttt{\{*()\}}\cite{pep_unpacking},
+which are slightly faster (and more elegant) than the equivalent
+\texttt{set()} constructor, as demonstrated by this code snippet:
+
+    \begin{tcolorbox}[breakable, size=fbox, boxrule=1pt, pad at break*=1mm,colback=cellbackground, colframe=cellborder]
+\prompt{In}{incolor}{18}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+\PY{c+c1}{\PYZsh{} Efficiency of set() vs. \PYZob{}*()\PYZcb{}}
+\PY{n+nb}{print}\PY{p}{(}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+se}{\PYZbs{}n}\PY{l+s+s1}{\PYZsq{}} \PY{o}{+} \PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{Efficiency of }\PY{l+s+s1}{\PYZob{}}\PY{l+s+s1}{*()\PYZcb{} vs. set():}\PY{l+s+s1}{\PYZsq{}}\PY{p}{)}
+
+\PY{n}{number\PYZus{}set} \PY{o}{=} \PY{l+m+mi}{100000000}
+\PY{n}{empty\PYZus{}literal\PYZus{}time} \PY{o}{=} \PY{p}{(}\PY{n}{timeit}\PY{o}{.}\PY{n}{timeit}\PY{p}{(}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{\PYZob{}}\PY{l+s+s1}{*()\PYZcb{}}\PY{l+s+s1}{\PYZsq{}}\PY{p}{,} \PY{n}{number}\PY{o}{=}\PY{n}{number\PYZus{}set}\PY{p}{)}\PY{p}{)} \PY{o}{/} \PY{n}{number\PYZus{}set}
+\PY{n}{set\PYZus{}time} \PY{o}{=} \PY{p}{(}\PY{n}{timeit}\PY{o}{.}\PY{n}{timeit}\PY{p}{(}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{set()}\PY{l+s+s1}{\PYZsq{}}\PY{p}{,} \PY{n}{number}\PY{o}{=}\PY{n}{number\PYZus{}set}\PY{p}{)}\PY{p}{)} \PY{o}{/} \PY{n}{number\PYZus{}set}
+
+\PY{n+nb}{print}\PY{p}{(}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{\PYZhy{} empty literal execution time: }\PY{l+s+si}{\PYZob{}\PYZcb{}}\PY{l+s+s1}{ s.}\PY{l+s+s1}{\PYZsq{}}\PY{o}{.}\PY{n}{format}\PY{p}{(}\PY{n}{empty\PYZus{}literal\PYZus{}time}\PY{p}{)}\PY{p}{)}
+\PY{n+nb}{print}\PY{p}{(}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{\PYZhy{} set constructor execution time: }\PY{l+s+si}{\PYZob{}\PYZcb{}}\PY{l+s+s1}{ s.}\PY{l+s+s1}{\PYZsq{}}\PY{o}{.}\PY{n}{format}\PY{p}{(}\PY{n}{set\PYZus{}time}\PY{p}{)}\PY{p}{)}
+\PY{k}{if} \PY{n}{empty\PYZus{}literal\PYZus{}time} \PY{o}{\PYZlt{}} \PY{n}{set\PYZus{}time}\PY{p}{:}
+    \PY{n+nb}{print}\PY{p}{(}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{Empty literal is faster than set constructor.}\PY{l+s+s1}{\PYZsq{}}\PY{p}{)}
+\PY{k}{else}\PY{p}{:}
+    \PY{n+nb}{print}\PY{p}{(}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{Set constructor is faster than empty literal.}\PY{l+s+s1}{\PYZsq{}}\PY{p}{)}
+\end{Verbatim}
+\end{tcolorbox}
+
+    \begin{Verbatim}[commandchars=\\\{\}]
+
+Efficiency of \{*()\} vs. set():
+- empty literal execution time: 6.956522499999948e-08 s.
+- set constructor execution time: 7.692990500000008e-08 s.
+Empty literal is faster than set constructor.
+    \end{Verbatim}
+
+    \hypertarget{bron-kerbosch-algorithm-results}{%
+\subsubsection*{Bron-Kerbosch algorithm
+results}\label{bron-kerbosch-algorithm-results}}
+
+Let us now find all maximum cliques, and print them exactly once. Since
+our graph has more than 2000 nodes, this operation could take too long,
+so we will restrict this search to a \textbf{random subgraph of 100
+vertices} in order to effectively test our algorithm while still saving
+time. NetworkX' library functions make the extraction of the subgraph
+immediate:
+
+    \begin{tcolorbox}[breakable, size=fbox, boxrule=1pt, pad at break*=1mm,colback=cellbackground, colframe=cellborder]
+\prompt{In}{incolor}{19}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+\PY{k}{def} \PY{n+nf}{sample\PYZus{}random\PYZus{}subgraph}\PY{p}{(}\PY{n}{g}\PY{p}{,} \PY{n}{n}\PY{p}{)}\PY{p}{:}
+    \PY{c+c1}{\PYZsh{} Check that g is a NetworkX graph}
+    \PY{k}{if} \PY{o+ow}{not} \PY{n+nb}{isinstance}\PY{p}{(}\PY{n}{g}\PY{p}{,} \PY{n}{nx}\PY{o}{.}\PY{n}{classes}\PY{o}{.}\PY{n}{graph}\PY{o}{.}\PY{n}{Graph}\PY{p}{)}\PY{p}{:}
+        \PY{k}{raise} \PY{n}{nx}\PY{o}{.}\PY{n}{NetworkXError}\PY{p}{(}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{The provided graph is not a valid NetworkX undirected graph.}\PY{l+s+s1}{\PYZsq{}}\PY{p}{)}
+
+    \PY{c+c1}{\PYZsh{} Check that g is not empty}
+    \PY{k}{if} \PY{n}{g}\PY{o}{.}\PY{n}{nodes}\PY{p}{:}
+        \PY{k}{return} \PY{n}{g}\PY{o}{.}\PY{n}{subgraph}\PY{p}{(}\PY{n}{random}\PY{o}{.}\PY{n}{sample}\PY{p}{(}\PY{n}{g}\PY{o}{.}\PY{n}{nodes}\PY{p}{,} \PY{n}{n}\PY{p}{)}\PY{p}{)}
+    \PY{k}{else}\PY{p}{:}
+        \PY{k}{raise} \PY{n}{nx}\PY{o}{.}\PY{n}{NetworkXPointlessConcept}\PY{p}{(}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{The provided graph is empty.}\PY{l+s+s1}{\PYZsq{}}\PY{p}{)}
+\end{Verbatim}
+\end{tcolorbox}
+
+    The resulting cliques, calculated using the efficient degeneracy
+ordering variant of the Bron-Kerbosch algorithm, are:
+
+    \begin{tcolorbox}[breakable, size=fbox, boxrule=1pt, pad at break*=1mm,colback=cellbackground, colframe=cellborder]
+\prompt{In}{incolor}{20}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+\PY{c+c1}{\PYZsh{} Find and print all maximal cliques in a random subgraph of 100 nodes}
+\PY{n}{subgraph} \PY{o}{=} \PY{n}{sample\PYZus{}random\PYZus{}subgraph}\PY{p}{(}\PY{n}{g}\PY{p}{,} \PY{l+m+mi}{100}\PY{p}{)}
+\PY{n}{find\PYZus{}all\PYZus{}maximal\PYZus{}cliques\PYZus{}bk}\PY{p}{(}\PY{n}{subgraph}\PY{p}{,} \PY{n}{variant}\PY{o}{=}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{degeneracy}\PY{l+s+s1}{\PYZsq{}}\PY{p}{,} \PY{n}{print\PYZus{}result}\PY{o}{=}\PY{k+kc}{True}\PY{p}{)}
+\end{Verbatim}
+\end{tcolorbox}
+
+    \begin{Verbatim}[commandchars=\\\{\}]
+\{'Roman Witula', 'Gary W. Adamson', 'Steve Butler'\}
+\{'Gary W. Adamson', 'Manda Riehl', 'Jean-Luc Baril'\}
+\{'Gary W. Adamson', 'Peter M. Chema', 'Colin Hall'\}
+\{'R. J. Mathar', 'Dmitry Zaitsev', 'Manda Riehl'\}
+\{'Gary W. Adamson', 'John Keith', 'Alexandre Wajnberg'\}
+\{'Gary W. Adamson', 'Ahmed Fares', 'Kem Phillips'\}
+\{'David Christopher', 'Gary W. Adamson', 'David W. Wilson'\}
+\{'Gary W. Adamson', 'Graham H. Hawkes', 'Ph. Leroux'\}
+\{'R. J. Mathar', 'Gary W. Adamson', 'Karl V. Keller'\}
+\{'R. J. Mathar', 'Jonathan Sondow', 'Gary W. Adamson', 'Peter M. Chema'\}
+\{'Berlin', 'Ahmed Fares', 'Gary W. Adamson', 'Manda Riehl'\}
+\{'David W. Wilson', 'R. J. Mathar', 'Frank Ruskey', 'Gary W. Adamson'\}
+\{'R. J. Mathar', 'Gary W. Adamson', 'Manda Riehl', 'Bryan T. Ek'\}
+\{'R. J. Mathar', 'Roman Witula', 'Gary W. Adamson', 'Rogério Serôdio'\}
+\{'R. J. Mathar', 'Alzhekeyev Ascar M', 'Gary W. Adamson', 'R. K. Guy'\}
+\{'Gary W. Adamson', 'Isaac Saffold', 'R. J. Mathar', 'William Entriken'\}
+\{'Richard Stanley', 'Gary W. Adamson', 'Kassie Archer', 'Dimitris Valianatos'\}
+\{'David W. Wilson', 'R. J. Mathar', 'Gary W. Adamson', 'Ahmed Fares', 'Isaac Saffold'\}
+\{'David W. Wilson', 'Richard Stanley', 'Douglas Latimer', 'Gary W. Adamson', 'AA >= n'\}
+\{'David W. Wilson', 'Richard Stanley', 'R. J. Mathar', 'Douglas Latimer', 'Gary W.
+Adamson'\}
+\{'Richard Stanley', 'R. J. Mathar', 'Gary W. Adamson', 'Dimitris Valianatos'\}
+\{'Dimitris Valianatos', 'R. J. Mathar', 'Jonathan Sondow', 'Gary W. Adamson', 'Alexandre
+Wajnberg', 'Michael B. Porter'\}
+\{'Douglas Latimer', 'David W. Wilson', 'R. J. Mathar', 'Gary W. Adamson', 'Ahmed Fares',
+'Vladimir Letsko'\}
+\{'David W. Wilson', 'R. J. Mathar', 'Gary W. Adamson', 'Ahmed Fares', 'Manda Riehl'\}
+\{'Jonathan Sondow', 'Gary W. Adamson', 'Alexandre Wajnberg', 'For example', 'R. K. Guy'\}
+\{'R. J. Mathar', 'Jonathan Sondow', 'Gary W. Adamson', 'Alexandre Wajnberg', 'R. K. Guy'\}
+\{'David W. Wilson', 'Jonathan Sondow', 'Gary W. Adamson', 'Alexandre Wajnberg', 'For
+example'\}
+\{'David W. Wilson', 'Chai Wah Wu', 'R. J. Mathar', 'Jonathan Sondow', 'Gary W. Adamson',
+'Alexandre Wajnberg'\}
+\{'David W. Wilson', 'R. J. Mathar', 'Graham H. Hawkes', 'Gary W. Adamson', 'Manda Riehl',
+'Michael B. Porter', 'Alexandre Wajnberg'\}
+\{'David W. Wilson', 'R. J. Mathar', 'Jonathan Sondow', 'Gary W. Adamson', 'Alexandre
+Wajnberg', 'Michael B. Porter'\}
+\{'R. J. Mathar', 'Roman Witula', 'Gary W. Adamson', 'Manda Riehl'\}
+\{'R. J. Mathar', 'Roman Witula', 'Gary W. Adamson', 'Jonathan Sondow'\}
+\{'Neven Juric', 'Roman Witula', 'Gary W. Adamson', 'Jonathan Sondow', 'Ravi Kumar
+Davala', 'Liam Solus', 'Kostas Manes'\}
+    \end{Verbatim}
+
+            \begin{tcolorbox}[breakable, size=fbox, boxrule=.5pt, pad at break*=1mm, opacityfill=0]
+\prompt{Out}{outcolor}{20}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+<generator object find\_all\_maximal\_cliques\_bk.<locals>.bron\_kerbosch\_degeneracy at
+0x000002376F418E40>
+\end{Verbatim}
+\end{tcolorbox}
+        
+    At this point we can \textbf{verify} the \textbf{efficiency} and
+\textbf{correctness} of the algorithm by running the other two
+Bron-Kerbosch variants and comparing their results:
+
+    \begin{tcolorbox}[breakable, size=fbox, boxrule=1pt, pad at break*=1mm,colback=cellbackground, colframe=cellborder]
+\prompt{In}{incolor}{21}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+\PY{c+c1}{\PYZsh{} Efficiency of different Bron\PYZhy{}Kerbosch variants}
+\PY{n+nb}{print}\PY{p}{(}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+se}{\PYZbs{}n}\PY{l+s+s1}{\PYZsq{}} \PY{o}{+} \PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{Efficiency of different Bron\PYZhy{}Kerbosch variants:}\PY{l+s+s1}{\PYZsq{}}\PY{p}{)}
+
+\PY{n}{bk\PYZus{}classic\PYZus{}start} \PY{o}{=} \PY{n}{timeit}\PY{o}{.}\PY{n}{default\PYZus{}timer}\PY{p}{(}\PY{p}{)}
+\PY{n}{bk\PYZus{}classic\PYZus{}cliques} \PY{o}{=} \PY{n}{find\PYZus{}all\PYZus{}maximal\PYZus{}cliques\PYZus{}bk}\PY{p}{(}\PY{n}{subgraph}\PY{p}{,} \PY{n}{variant}\PY{o}{=}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{classic}\PY{l+s+s1}{\PYZsq{}}\PY{p}{)}
+\PY{n}{bk\PYZus{}classic\PYZus{}end} \PY{o}{=} \PY{n}{timeit}\PY{o}{.}\PY{n}{default\PYZus{}timer}\PY{p}{(}\PY{p}{)}
+
+\PY{n}{bk\PYZus{}tomita\PYZus{}start} \PY{o}{=} \PY{n}{timeit}\PY{o}{.}\PY{n}{default\PYZus{}timer}\PY{p}{(}\PY{p}{)}
+\PY{n}{bk\PYZus{}tomita\PYZus{}cliques} \PY{o}{=} \PY{n}{find\PYZus{}all\PYZus{}maximal\PYZus{}cliques\PYZus{}bk}\PY{p}{(}\PY{n}{subgraph}\PY{p}{,} \PY{n}{variant}\PY{o}{=}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{tomita}\PY{l+s+s1}{\PYZsq{}}\PY{p}{)}
+\PY{n}{bk\PYZus{}tomita\PYZus{}end} \PY{o}{=} \PY{n}{timeit}\PY{o}{.}\PY{n}{default\PYZus{}timer}\PY{p}{(}\PY{p}{)}
+
+\PY{n}{bk\PYZus{}degeneracy\PYZus{}start} \PY{o}{=} \PY{n}{timeit}\PY{o}{.}\PY{n}{default\PYZus{}timer}\PY{p}{(}\PY{p}{)}
+\PY{n}{bk\PYZus{}degeneracy\PYZus{}cliques} \PY{o}{=} \PY{n}{find\PYZus{}all\PYZus{}maximal\PYZus{}cliques\PYZus{}bk}\PY{p}{(}\PY{n}{subgraph}\PY{p}{,} \PY{n}{variant}\PY{o}{=}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{degeneracy}\PY{l+s+s1}{\PYZsq{}}\PY{p}{)}
+\PY{n}{bk\PYZus{}degeneracy\PYZus{}end} \PY{o}{=} \PY{n}{timeit}\PY{o}{.}\PY{n}{default\PYZus{}timer}\PY{p}{(}\PY{p}{)}
+
+\PY{n}{bk\PYZus{}classic\PYZus{}time} \PY{o}{=} \PY{n}{bk\PYZus{}classic\PYZus{}end} \PY{o}{\PYZhy{}} \PY{n}{bk\PYZus{}classic\PYZus{}start}
+\PY{n}{bk\PYZus{}tomita\PYZus{}time} \PY{o}{=} \PY{n}{bk\PYZus{}tomita\PYZus{}end} \PY{o}{\PYZhy{}} \PY{n}{bk\PYZus{}tomita\PYZus{}start}
+\PY{n}{bk\PYZus{}degeneracy\PYZus{}time} \PY{o}{=} \PY{n}{bk\PYZus{}degeneracy\PYZus{}end} \PY{o}{\PYZhy{}} \PY{n}{bk\PYZus{}degeneracy\PYZus{}start}
+
+\PY{n+nb}{print}\PY{p}{(}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{\PYZhy{} Bron\PYZhy{}Kerbosch classic execution time: }\PY{l+s+si}{\PYZob{}\PYZcb{}}\PY{l+s+s1}{ s.}\PY{l+s+s1}{\PYZsq{}}\PY{o}{.}\PY{n}{format}\PY{p}{(}\PY{n}{bk\PYZus{}classic\PYZus{}time}\PY{p}{)}\PY{p}{)}
+\PY{n+nb}{print}\PY{p}{(}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{\PYZhy{} Bron\PYZhy{}Kerbosch with Tomita pivoting execution time: }\PY{l+s+si}{\PYZob{}\PYZcb{}}\PY{l+s+s1}{ s.}\PY{l+s+s1}{\PYZsq{}}\PY{o}{.}\PY{n}{format}\PY{p}{(}\PY{n}{bk\PYZus{}tomita\PYZus{}time}\PY{p}{)}\PY{p}{)}
+\PY{n+nb}{print}\PY{p}{(}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{\PYZhy{} Bron\PYZhy{}Kerbosch with degeneracy ordering execution time: }\PY{l+s+si}{\PYZob{}\PYZcb{}}\PY{l+s+s1}{ s.}\PY{l+s+s1}{\PYZsq{}}\PY{o}{.}\PY{n}{format}\PY{p}{(}\PY{n}{bk\PYZus{}degeneracy\PYZus{}time}\PY{p}{)}\PY{p}{)}
+\PY{k}{if} \PY{n}{bk\PYZus{}classic\PYZus{}time} \PY{o}{\PYZlt{}} \PY{n}{bk\PYZus{}tomita\PYZus{}time} \PY{o+ow}{and} \PY{n}{bk\PYZus{}classic\PYZus{}time} \PY{o}{\PYZlt{}} \PY{n}{bk\PYZus{}degeneracy\PYZus{}time}\PY{p}{:}
+    \PY{n+nb}{print}\PY{p}{(}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{Bron\PYZhy{}Kerbosch classic is faster than the other two variants.}\PY{l+s+s1}{\PYZsq{}}\PY{p}{)}
+\PY{k}{elif} \PY{n}{bk\PYZus{}tomita\PYZus{}time} \PY{o}{\PYZlt{}} \PY{n}{bk\PYZus{}classic\PYZus{}time} \PY{o+ow}{and} \PY{n}{bk\PYZus{}tomita\PYZus{}time} \PY{o}{\PYZlt{}} \PY{n}{bk\PYZus{}degeneracy\PYZus{}time}\PY{p}{:}
+    \PY{n+nb}{print}\PY{p}{(}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{Bron\PYZhy{}Kerbosch with Tomita pivoting is faster than the other two variants.}\PY{l+s+s1}{\PYZsq{}}\PY{p}{)}
+\PY{k}{elif} \PY{n}{bk\PYZus{}degeneracy\PYZus{}time} \PY{o}{\PYZlt{}} \PY{n}{bk\PYZus{}classic\PYZus{}time} \PY{o+ow}{and} \PY{n}{bk\PYZus{}degeneracy\PYZus{}time} \PY{o}{\PYZlt{}} \PY{n}{bk\PYZus{}tomita\PYZus{}time}\PY{p}{:}
+    \PY{n+nb}{print}\PY{p}{(}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{Bron\PYZhy{}Kerbosch with degeneracy ordering is faster than the other two variants.}\PY{l+s+s1}{\PYZsq{}}\PY{p}{)}
+\end{Verbatim}
+\end{tcolorbox}
+
+    \begin{Verbatim}[commandchars=\\\{\}]
+
+Efficiency of different Bron-Kerbosch variants:
+- Bron-Kerbosch classic execution time: 9.559999999986246e-05 s.
+- Bron-Kerbosch with Tomita pivoting execution time: 6.86999999999216e-05 s.
+- Bron-Kerbosch with degeneracy ordering execution time: 6.690000000020291e-05 s.
+Bron-Kerbosch with degeneracy ordering is faster than the other two variants.
+    \end{Verbatim}
+
+    \begin{tcolorbox}[breakable, size=fbox, boxrule=1pt, pad at break*=1mm,colback=cellbackground, colframe=cellborder]
+\prompt{In}{incolor}{22}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+\PY{c+c1}{\PYZsh{} Correctness of different Bron\PYZhy{}Kerbosch variants}
+\PY{n+nb}{print}\PY{p}{(}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+se}{\PYZbs{}n}\PY{l+s+s1}{\PYZsq{}} \PY{o}{+} \PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{Checking the correctness of different Bron\PYZhy{}Kerbosch variants... }\PY{l+s+s1}{\PYZsq{}}\PY{p}{,} \PY{n}{end}\PY{o}{=}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{\PYZsq{}}\PY{p}{)}
+
+\PY{n}{bk\PYZus{}classic\PYZus{}cliques} \PY{o}{=} \PY{n+nb}{list}\PY{p}{(}\PY{n}{bk\PYZus{}classic\PYZus{}cliques}\PY{p}{)}
+\PY{n}{bk\PYZus{}tomita\PYZus{}cliques} \PY{o}{=} \PY{n+nb}{list}\PY{p}{(}\PY{n}{bk\PYZus{}tomita\PYZus{}cliques}\PY{p}{)}
+\PY{n}{bk\PYZus{}degeneracy\PYZus{}cliques} \PY{o}{=} \PY{n+nb}{list}\PY{p}{(}\PY{n}{bk\PYZus{}degeneracy\PYZus{}cliques}\PY{p}{)}
+
+\PY{n}{correctness\PYZus{}flag} \PY{o}{=} \PY{k+kc}{False}
+
+\PY{k}{if} \PY{n+nb}{list}\PY{p}{(}\PY{n+nb}{filter}\PY{p}{(}\PY{k}{lambda} \PY{n}{c}\PY{p}{:} \PY{n}{c} \PY{o+ow}{not} \PY{o+ow}{in} \PY{n}{bk\PYZus{}classic\PYZus{}cliques}\PY{p}{,} \PY{n}{bk\PYZus{}tomita\PYZus{}cliques}\PY{p}{)}\PY{p}{)} \PY{o+ow}{or} \PY{n+nb}{list}\PY{p}{(}\PY{n+nb}{filter}\PY{p}{(}\PY{k}{lambda} \PY{n}{c}\PY{p}{:} \PY{n}{c} \PY{o+ow}{not} \PY{o+ow}{in} \PY{n}{bk\PYZus{}tomita\PYZus{}cliques}\PY{p}{,} \PY{n}{bk\PYZus{}classic\PYZus{}cliques}\PY{p}{)}\PY{p}{)}\PY{p}{:}
+    \PY{n+nb}{print}\PY{p}{(}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{the cliques returned by the classic Bron\PYZhy{}Kerbosch algorithm are different from those generated by the Tomita pivoting variant.}\PY{l+s+s1}{\PYZsq{}}\PY{p}{)}
+\PY{k}{elif} \PY{n+nb}{list}\PY{p}{(}\PY{n+nb}{filter}\PY{p}{(}\PY{k}{lambda} \PY{n}{c}\PY{p}{:} \PY{n}{c} \PY{o+ow}{not} \PY{o+ow}{in} \PY{n}{bk\PYZus{}classic\PYZus{}cliques}\PY{p}{,} \PY{n}{bk\PYZus{}degeneracy\PYZus{}cliques}\PY{p}{)}\PY{p}{)} \PY{o+ow}{or} \PY{n+nb}{list}\PY{p}{(}\PY{n+nb}{filter}\PY{p}{(}\PY{k}{lambda} \PY{n}{c}\PY{p}{:} \PY{n}{c} \PY{o+ow}{not} \PY{o+ow}{in} \PY{n}{bk\PYZus{}degeneracy\PYZus{}cliques}\PY{p}{,} \PY{n}{bk\PYZus{}classic\PYZus{}cliques}\PY{p}{)}\PY{p}{)}\PY{p}{:}
+    \PY{n+nb}{print}\PY{p}{(}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{the cliques returned by the classic Bron\PYZhy{}Kerbosch algorithm are different from those generated by the degeneracy ordering variant.}\PY{l+s+s1}{\PYZsq{}}\PY{p}{)}
+\PY{k}{elif} \PY{n+nb}{list}\PY{p}{(}\PY{n+nb}{filter}\PY{p}{(}\PY{k}{lambda} \PY{n}{c}\PY{p}{:} \PY{n}{c} \PY{o+ow}{not} \PY{o+ow}{in} \PY{n}{bk\PYZus{}classic\PYZus{}cliques}\PY{p}{,} \PY{n}{bk\PYZus{}degeneracy\PYZus{}cliques}\PY{p}{)}\PY{p}{)} \PY{o+ow}{or} \PY{n+nb}{list}\PY{p}{(}\PY{n+nb}{filter}\PY{p}{(}\PY{k}{lambda} \PY{n}{c}\PY{p}{:} \PY{n}{c} \PY{o+ow}{not} \PY{o+ow}{in} \PY{n}{bk\PYZus{}degeneracy\PYZus{}cliques}\PY{p}{,} \PY{n}{bk\PYZus{}classic\PYZus{}cliques}\PY{p}{)}\PY{p}{)}\PY{p}{:}
+    \PY{n+nb}{print}\PY{p}{(}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{the cliques returned by the Tomita pivoting Bron\PYZhy{}Kerbosch algorithm are different from those generated by the degeneracy ordering variant.}\PY{l+s+s1}{\PYZsq{}}\PY{p}{)}
+\PY{k}{else}\PY{p}{:}
+    \PY{n}{correctness\PYZus{}flag} \PY{o}{=} \PY{k+kc}{True}
+    \PY{n+nb}{print}\PY{p}{(}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{the cliques returned by all three algorithms are identical.}\PY{l+s+s1}{\PYZsq{}}\PY{p}{)}
+
+\PY{k}{if} \PY{n}{correctness\PYZus{}flag}\PY{p}{:}
+    \PY{n+nb}{print}\PY{p}{(}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{All implemeneted variants are correct.}\PY{l+s+s1}{\PYZsq{}}\PY{p}{)}
+\PY{k}{else}\PY{p}{:}
+    \PY{n+nb}{print}\PY{p}{(}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{There has been an error in the implementation of the Bron\PYZhy{}Kerbosch algorithms.}\PY{l+s+s1}{\PYZsq{}}\PY{p}{)}
+\end{Verbatim}
+\end{tcolorbox}
+
+    \begin{Verbatim}[commandchars=\\\{\}]
+
+Checking the correctness of different Bron-Kerbosch variants{\ldots} the cliques returned by
+all three algorithms are identical.
+All implemeneted variants are correct.
+    \end{Verbatim}
+
+    \hypertarget{finding-the-maximum-clique}{%
+\subsection{Maximum
+clique}\label{finding-the-maximum-clique}}
+
+At this point finding the \textbf{maximum clique} is as simple as
+getting the list of all cliques previously calculated and extract from
+it the \textbf{clique with the most elements}.
+
+The Python implementation below is an example of \textbf{overloaded
+function} which allows for greater flexibility in the choice of the
+input type. Indeed, its main argument \texttt{x} can either be:
+
+\begin{itemize}
+    \item a NetworkX undirected graph (in which case the
+\texttt{find\_all\_maximal\_cliques\_bk()} function is called in order
+to compute all cliques first), or \item a list of all maximal cliques,
+stored as either lists or sets of nodes (which avoids re-computing all
+cliques if already present in some other variable).
+\end{itemize}
+
+    \begin{tcolorbox}[breakable, size=fbox, boxrule=1pt, pad at break*=1mm,colback=cellbackground, colframe=cellborder]
+\prompt{In}{incolor}{23}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+\PY{k}{def} \PY{n+nf}{find\PYZus{}maximum\PYZus{}clique}\PY{p}{(}\PY{n}{x}\PY{p}{,} \PY{n}{print\PYZus{}result}\PY{o}{=}\PY{k+kc}{False}\PY{p}{)}\PY{p}{:}
+    \PY{c+c1}{\PYZsh{} Check input type}
+    \PY{k}{if} \PY{n+nb}{isinstance}\PY{p}{(}\PY{n}{x}\PY{p}{,} \PY{n+nb}{list}\PY{p}{)}\PY{p}{:}
+        \PY{n}{cliques} \PY{o}{=} \PY{n}{x}
+    \PY{k}{else}\PY{p}{:}
+        \PY{n}{cliques} \PY{o}{=} \PY{n+nb}{list}\PY{p}{(}\PY{n}{find\PYZus{}all\PYZus{}maximal\PYZus{}cliques\PYZus{}bk}\PY{p}{(}\PY{n}{x}\PY{p}{)}\PY{p}{)}
+
+    \PY{c+c1}{\PYZsh{} Find maximum clique and convert to set (if input is a list of lists)}
+    \PY{n}{maximum\PYZus{}clique} \PY{o}{=} \PY{n+nb}{set}\PY{p}{(}\PY{n}{cliques}\PY{p}{[}\PY{n}{np}\PY{o}{.}\PY{n}{argmax}\PY{p}{(}\PY{n}{np}\PY{o}{.}\PY{n}{array}\PY{p}{(}\PY{p}{[}\PY{n+nb}{len}\PY{p}{(}\PY{n}{c}\PY{p}{)} \PY{k}{for} \PY{n}{c} \PY{o+ow}{in} \PY{n}{cliques}\PY{p}{]}\PY{p}{)}\PY{p}{)}\PY{p}{]}\PY{p}{)}
+
+    \PY{c+c1}{\PYZsh{} Printing}
+    \PY{k}{if} \PY{n}{print\PYZus{}result}\PY{p}{:}
+        \PY{n+nb}{print}\PY{p}{(}\PY{n}{maximum\PYZus{}clique}\PY{p}{)}
+
+    \PY{k}{return} \PY{n}{maximum\PYZus{}clique}
+\end{Verbatim}
+\end{tcolorbox}
+
+    Using this function is as simple as writing:
+
+    \begin{tcolorbox}[breakable, size=fbox, boxrule=1pt, pad at break*=1mm,colback=cellbackground, colframe=cellborder]
+\prompt{In}{incolor}{24}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+\PY{c+c1}{\PYZsh{} Find maximum clique}
+\PY{n}{maximum\PYZus{}clique} \PY{o}{=} \PY{n}{find\PYZus{}maximum\PYZus{}clique}\PY{p}{(}\PY{n}{bk\PYZus{}degeneracy\PYZus{}cliques}\PY{p}{,} \PY{n}{print\PYZus{}result}\PY{o}{=}\PY{k+kc}{True}\PY{p}{)}
+\PY{n+nb}{print}\PY{p}{(}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+se}{\PYZbs{}n}\PY{l+s+s1}{\PYZsq{}} \PY{o}{+} \PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{The maximum clique of the random subgraph has length }\PY{l+s+si}{\PYZob{}\PYZcb{}}\PY{l+s+s1}{ and contains nodes: }\PY{l+s+se}{\PYZbs{}n}\PY{l+s+si}{\PYZob{}\PYZcb{}}\PY{l+s+s1}{.}\PY{l+s+s1}{\PYZsq{}}\PY{o}{.}\PY{n}{format}\PY{p}{(}\PY{n+nb}{len}\PY{p}{(}\PY{n}{maximum\PYZus{}clique}\PY{p}{)}\PY{p}{,} \PY{n}{maximum\PYZus{}clique}\PY{p}{)}\PY{p}{,} \PY{n}{end}\PY{o}{=}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{\PYZsq{}}\PY{p}{)}
+\end{Verbatim}
+\end{tcolorbox}
+
+    \begin{Verbatim}[commandchars=\\\{\}]
+\{'David W. Wilson', 'R. J. Mathar', 'Graham H. Hawkes', 'Gary W. Adamson', 'Manda Riehl',
+'Michael B. Porter', 'Alexandre Wajnberg'\}
+
+The maximum clique of the random subgraph has length 7 and contains nodes:
+\{'David W. Wilson', 'R. J. Mathar', 'Graham H. Hawkes', 'Gary W. Adamson', 'Manda Riehl',
+'Michael B. Porter', 'Alexandre Wajnberg'\}.
+    \end{Verbatim}
+
+\section{Conclusions}\label{conclusions}
+
+In this project we built a graph containing all authors extracted from
+all the comments of 83.218 OEIS JSON sequence files. We learnt about
+\textbf{regular expressions} in order to perform the parsing, and then
+delved into the variegated world of \textbf{cliques} to find one and all
+maximal cliques of the graph, as well as the largest one.
+
+We studied and correctly implemented \textbf{four different algorithms},
+three of which as different ways to find all cliques, and introduced
+less popular (but not less important) concepts such as the
+\textbf{degeneracy} of a graph.
+
+In the end, we not only reached the main goal of the project by parsing
+the OEIS files and analyzing the graph, but also created a series of
+\textbf{well-readable and efficient Python implementations} of some
+significant algorithms, learning along the way about this language's
+best practices and data structures.
+
+The complete code for this project was originally written as a
+standalone module in the \texttt{mihalcea.py} Python file, which can be
+executed from the command line with an optional boolean argument,
+\texttt{-\/-build\_graph}, in order to either build the graph from
+scratch or load it from an existing JSON file. All functions described
+can be imported from said script in order to be used independently in
+other applications, and are fully documented in the \texttt{mihalcea.py}
+script, too.
+
+\section{Testing}\label{testing}
+
+This project has been created and successfully tested on the following
+machine:
+
+\begin{itemize}
+\tightlist
+\item
+  \textbf{Motherboard:} MSI MS-B106
+\item
+  \textbf{CPU:} Intel Core i7-6700K @ 4.01 GHz, 8 core
+\item
+  \textbf{GPU:} AMD Radeon RX VEGA64 8GB
+\item
+  \textbf{RAM:} 16 GB DDR4 @ 2133 MHz
+\item
+  \textbf{SSD:} Samsung SSD 850 EVO 500 GB (540/520 MB/s r/w)
+\item
+  \textbf{HDD:} WD Blue 3 TB (180/220 MB/s r/w)
+\item
+  \textbf{OS:} Windows 10 Pro x64 1909
+\item
+  \textbf{IDE:} PyCharm Professional 2021.1
+\item
+  \textbf{Python:} 3.8
+\end{itemize}
+
+\section{License}\label{license}
+
+This work is licensed under a
+\href{https://creativecommons.org/licenses/by-nc-sa/4.0/deed.en}{Creative
+Commons ``Attribution-NonCommercial-ShareAlike 4.0 International''}
+license. More details are available in the \href{./LICENSE}{LICENSE}
+file.
+
+\printbibliography[
+heading=bibintoc,
+title={References}]
+
+    
+    
+    
+\end{document}
