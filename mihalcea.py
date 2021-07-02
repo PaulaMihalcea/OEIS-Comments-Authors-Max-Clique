@@ -244,14 +244,22 @@ def get_degeneracy_ordering(graph):
         raise nx.NetworkXPointlessConcept('The provided graph is empty.')
 
 
-def find_one_maximal_clique_greedy(g, print_result=False):
+def find_one_maximal_clique_greedy(g, variant='neighbors', print_result=False):
     """
     Greedy algorithm to find and optionally print one random maximal clique in the given graph.
+
+    This function implements two variants of the greedy algorithm, which can be optionally specified by the following keywords:
+        - naive: naive greedy algorithm, with no optimizations (scans all nodes);
+        - neighbors: more efficient implementation, scans only the neighbors of the current clique.
+
+    If no variant is specified, the neighbors version is used by default.
 
     Parameters
     ----------
     g : networkx.classes.graph.Graph
         A NetworkX undirected graph.
+    variant : str, (optional, default: "neighbors"; alternative options: "naive")
+        Specifies the variant of the greedy algorithm that should be used to find the maximal clique.
     print_result : bool, (optional, default: False)
         Flag for specifying whether the result should be printed on screen or not
 
@@ -268,6 +276,11 @@ def find_one_maximal_clique_greedy(g, print_result=False):
     networkx.NetworkXPointlessConcept
         If g is an empty graph.
 
+    Warnings
+    -------
+    UserWarning
+        If the "variant" parameter has not been passed a valid argument.
+
     Examples
     --------
     Find a maximal clique in graph g:
@@ -275,6 +288,9 @@ def find_one_maximal_clique_greedy(g, print_result=False):
 
     Find and print a maximal clique in graph g:
         find_one_maximal_clique(g, print_result=True)
+
+    Find a maximal clique in graph g using the naive variant:
+        find_one_maximal_clique(g, variant='naive')
     """
 
     # Check that g is a NetworkX graph
@@ -282,21 +298,46 @@ def find_one_maximal_clique_greedy(g, print_result=False):
         raise nx.NetworkXError('The provided graph is not a valid NetworkX undirected graph.')
 
     if g.nodes:
-        # Initialization
-        vertices = list(g.nodes)
-        start_node = random.choice(vertices)
-        vertices.remove(start_node)
-        clique = {start_node}
+        # Naive variant (all nodes)
+        if variant == 'naive':
+            # Initialization
+            vertices = list(g.nodes)
+            s = random.choice(vertices)
+            vertices.remove(s)
+            clique = {s}
 
-        # Greedy algorithm
-        for v in vertices:
-            valid = True
-            for u in clique:
-                if not g.has_edge(v, u):
-                    valid = False
-                    break
-            if valid:
-                clique.add(v)
+            # Greedy algorithm
+            for v in vertices:
+                valid = True
+                for u in clique:
+                    if not g.has_edge(v, u):
+                        valid = False
+                        break
+                if valid:
+                    clique.add(v)
+        # Neighbors variant
+        else:
+            # Wrong argument warning
+            if variant != 'neighbors':
+                warnings.warn('Invalid algorithm variant (\'{}\'). Using greedy algorithm restricted to neighbors as default.'.format(variant))
+
+            # Initialization
+            s = random.choice(list(g.nodes))
+            neighbors = list(g.neighbors(s))
+            clique = {s}
+
+            # Greedy algorithm
+            while neighbors:
+                v = neighbors.pop()
+                valid = True
+
+                for u in clique:
+                    if not g.has_edge(v, u):
+                        valid = False
+                        break
+                if valid:
+                    clique.add(v)
+                    neighbors.extend(list(g.neighbors(v)))
 
         # Result & printing
         if len(clique) > 2:

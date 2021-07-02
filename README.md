@@ -1,4 +1,4 @@
-# OEIS Comments Authors Max Clique
+# OEIS: Maximal Cliques of Authors from Comments
 ## Author: Paula Mihalcea
 #### Università degli Studi di Firenze
 
