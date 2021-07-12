@@ -1765,7 +1765,7 @@ The pivot \(u \in P \cup X\) is the node that maximises
   \If{$P = \emptyset$ and $X = \emptyset$}{
     $R$ is a maximal clique}
     choose pivot $u \in P \cup X$ that maximises $| P \cap \mathcal{N}(u)|$\\
-  \For{$v \in P \setminus \mathcal{N}(v)$}{
+  \For{$v \in P \setminus \mathcal{N}(u)$}{
     \textsc{Bron-Kerbosch-Tomita-Pivoting($R \cup \{v\}$, $P \cap \mathcal{N}(v)$, $X \cap \mathcal{N}(v)$)}\\
     $P = P \setminus \{v\}$\\
     $X = X \cup \{v\}$
