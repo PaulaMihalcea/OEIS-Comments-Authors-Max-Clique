@@ -4,7 +4,7 @@
 
 ---
 
-![](https://img.shields.io/github/repo-size/PaulaMihalcea/OEIS-Comments-Authors-Max-Clique)
+![](https://img.shields.io/github/repo-size/PaulaMihalcea/OEIS-Maximal-Cliques-of-Authors-from-Comments)
 
 **[OEIS](https://oeis.org/)** is the online encyclopaedia of **integer sequences**. It lists thousands of number sequences in lexicographic order, such as the [prime numbers](http://oeis.org/A000040) or the [Fibonacci sequence](http://oeis.org/A000045), easing the work of countless researchers since 1964, its foundation year.
 
